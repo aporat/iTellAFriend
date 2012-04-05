@@ -1,0 +1,48 @@
+What is iTellAFriend?
+==============================
+
+iTellAFriend is an iOS toolkit for displaying a preconfigued mail composer with a "Tell a Friend" template in ios apps.
+
+Installation
+==============================
+To install iTellAFriend into your app, drag the iTellAFriend.h, .m into your project. 
+
+To enable iTellAFriend in your application you need to initialize iTellAFriend before the app has finished launching. The easiest way to do this is to add the iTellAFriend configuration code in your AppDelegate's, like this:
+
+
+```
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+    
+....
+  
+  [iTellAFriend sharedInstance].appStoreID = 408981381;
+
+  
+  return YES;
+}
+
+```
+
+To present the iTellAFriend controller, use:
+
+```
+    if ([[iTellAFriend sharedInstance] canTellAFriend]) {
+      UINavigationController* tellAFriendController = [[iTellAFriend sharedInstance] tellAFriendController];
+      [self presentModalViewController:tellAFriendController animated:YES];
+    }
+```
+
+
+
+![](https://github.com/aporat/iTellAFriend/raw/master/screenshots/iphone-1.png) 
+&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;
+![](https://github.com/aporat/iTellAFriend/raw/master/screenshots/ipad-1.png) 
+
+
+Terms of Use
+==============================
+
+- Provided under the Apache 2.0 License

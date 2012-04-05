@@ -44,7 +44,6 @@
 		6DC7B607152DFCA1004968F4 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		6DF951DE152E15A300574DFD /* iTellAFriend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iTellAFriend.h; path = ../../src/iTellAFriend.h; sourceTree = "<group>"; };
 		6DF951DF152E15A300574DFD /* iTellAFriend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iTellAFriend.m; path = ../../src/iTellAFriend.m; sourceTree = "<group>"; };
-		6DF951E7152E15C600574DFD /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,7 +106,6 @@
 		6D3E345014C4F54E0003B72B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				6DF951E7152E15C600574DFD /* Security.framework */,
 				6DC7B607152DFCA1004968F4 /* MessageUI.framework */,
 				6D3E345114C4F54E0003B72B /* UIKit.framework */,
 				6D3E345314C4F54E0003B72B /* Foundation.framework */,

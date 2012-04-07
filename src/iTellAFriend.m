@@ -63,10 +63,6 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
   if ((self = [super init]))
   {
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(applicationLaunched:)
-                                                 name:UIApplicationDidFinishLaunchingNotification
-                                               object:nil];
     // get country
     self.appStoreCountry = [(NSLocale *)[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
     
@@ -77,19 +73,33 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
       self.applicationVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
     }
     
-    // app key used to cache the app data
-    self.applicationKey = [NSString stringWithFormat:@"%d-%@", appStoreID, applicationVersion];
-    
-    // load the settings info from the app NSUserDefaults, to avoid  http requests
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if ([[defaults objectForKey:iTellAFriendAppKey] isEqualToString:applicationKey]) {
-      self.applicationGenreName = [defaults objectForKey:iTellAFriendAppGenreNameKey];
-      self.appStoreIconImage = [defaults objectForKey:iTellAFriendAppStoreIconImageKey];
-      self.applicationSellerName = [defaults objectForKey:iTellAFriendAppSellerNameKey];
-    }
+
     
   }
   return self;
+}
+
+- (void)setAppStoreID:(NSUInteger)appStore
+{
+
+  appStoreID = appStore;
+  
+  // app key used to cache the app data
+  self.applicationKey = [NSString stringWithFormat:@"%d-%@", appStore, applicationVersion];
+  
+  // load the settings info from the app NSUserDefaults, to avoid  http requests
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  if ([[defaults objectForKey:iTellAFriendAppKey] isEqualToString:applicationKey]) {
+    self.applicationGenreName = [defaults objectForKey:iTellAFriendAppGenreNameKey];
+    self.appStoreIconImage = [defaults objectForKey:iTellAFriendAppStoreIconImageKey];
+    self.applicationSellerName = [defaults objectForKey:iTellAFriendAppSellerNameKey];
+  }
+  
+  // check if this is a new version
+  if (![[defaults objectForKey:iTellAFriendAppKey] isEqualToString:applicationKey]) {
+    [self promptIfNetworkAvailable];  
+  }
+
 }
 
 - (BOOL)canTellAFriend
@@ -148,7 +158,7 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
                                 "<p style=\"font:14px Helvetica,Arial,sans-serif;margin:0 0 2px\">Category: %@</p> \n"
                                 "</a> \n"
                                 "<p style=\"font:14px Helvetica,Arial,sans-serif;margin:0\"> \n"
-                                "<a target=\"_blank\" href=\"&@\"><img src=\"http://ax.phobos.apple.com.edgesuite.net/email/images_shared/view_item_button.png\"></a> \n"
+                                "<a target=\"_blank\" href=\"%@\"><img src=\"http://ax.phobos.apple.com.edgesuite.net/email/images_shared/view_item_button.png\"></a> \n"
                                 "</p> \n"
                                 "</td> \n"
                                 "</tr> \n"
@@ -167,10 +177,6 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
                                 "<td align=\"center\"> \n"
                                 "<span style=\"font-family:Helvetica,Arial;font-size:11px;color:#696969\"> \n"
                                 "Please note that you have not been added to any email lists. \n"
-                                "<br> \n"
-                                "Copyright &copy; 2012 Apple Inc. \n"
-                                "<a target=\"_blank\" href=\"http://www.apple.com/legal/\" style=\"color:#1b1b1b\">All rights reserved</a> \n"
-                                "<br> \n"
                                 "</span> \n"
                                 "</td> \n"
                                 "</tr> \n"
@@ -326,15 +332,6 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
   return nil;
 }
 
-- (void)applicationLaunched:(NSNotification *)notification
-{
-  // check if this is a new version
-  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-  if (![[defaults objectForKey:iTellAFriendAppKey] isEqualToString:applicationKey]) {
-    [self promptIfNetworkAvailable];  
-  }
-  
-}
 
 - (void)promptIfNetworkAvailable
 {
@@ -344,7 +341,6 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
 
 - (void)dealloc
 {
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
 
   [appStoreCountry release];
   [applicationName release];

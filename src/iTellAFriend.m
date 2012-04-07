@@ -90,6 +90,7 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
   // load the settings info from the app NSUserDefaults, to avoid  http requests
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
   if ([[defaults objectForKey:iTellAFriendAppKey] isEqualToString:applicationKey]) {
+    self.applicationName = [defaults objectForKey:iTellAFriendAppNameKey];
     self.applicationGenreName = [defaults objectForKey:iTellAFriendAppGenreNameKey];
     self.appStoreIconImage = [defaults objectForKey:iTellAFriendAppStoreIconImageKey];
     self.applicationSellerName = [defaults objectForKey:iTellAFriendAppSellerNameKey];

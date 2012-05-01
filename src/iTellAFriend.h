@@ -47,7 +47,7 @@
 @property (nonatomic, copy) NSString *messageTitle;
 @property (nonatomic, copy) NSString *message;
 @property (nonatomic, assign) NSUInteger appStoreID;
-@property (nonatomic, strong) NSURL *appStoreURL;
+@property (nonatomic, copy) NSURL *appStoreURL;
 
 + (iTellAFriend *)sharedInstance;
 

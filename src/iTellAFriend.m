@@ -115,7 +115,7 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
 
 - (UINavigationController *)tellAFriendController
 {
-  MFMailComposeViewController *picker = [[[MFMailComposeViewController alloc] init] autorelease];
+  MFMailComposeViewController *picker = [[MFMailComposeViewController alloc] init];
   picker.mailComposeDelegate = self;
   
   [picker setSubject:self.messageTitle];
@@ -205,61 +205,6 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
   return [NSURL URLWithString:[NSString stringWithFormat:iTellAFriendiOSAppStoreURLFormat, @"app", appStoreID]];
 }
 
-- (void)checkForConnectivityInBackground
-{
-  @synchronized (self)
-  {
-    @autoreleasepool
-    {
-      NSString *iTunesServiceURL = [NSString stringWithFormat:iTellAppLookupURLFormat, appStoreCountry, appStoreID];
-      
-      NSError *error = nil;
-      NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:iTunesServiceURL] options:NSDataReadingUncached error:&error];
-      if (data)
-      {
-        // convert to string
-        NSString *json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-
-        // get genre  
-        if (!applicationGenreName)
-        {
-          NSString *genreName = [self valueForKey:@"primaryGenreName" inJSON:json];
-          [self performSelectorOnMainThread:@selector(setApplicationGenreName:) withObject:genreName waitUntilDone:YES];
-          [defaults setObject:genreName forKey:iTellAFriendAppGenreNameKey];
-        }
-        
-        if (!appStoreIconImage)
-        {
-          NSString *iconImage = [self valueForKey:@"artworkUrl100" inJSON:json];
-          [self performSelectorOnMainThread:@selector(setAppStoreIconImage:) withObject:iconImage waitUntilDone:YES];
-          [defaults setObject:iconImage forKey:iTellAFriendAppStoreIconImageKey];
-        }
-        
-        if (!applicationName)
-        {
-          NSString *appName = [self valueForKey:@"trackName" inJSON:json];
-          [self performSelectorOnMainThread:@selector(setApplicationName:) withObject:appName waitUntilDone:YES];
-          [defaults setObject:appName forKey:iTellAFriendAppNameKey];
-        }
-                
-        if (!applicationSellerName)
-        {
-          NSString *sellerName = [self valueForKey:@"sellerName" inJSON:json];
-          [self performSelectorOnMainThread:@selector(setApplicationSellerName:) withObject:sellerName waitUntilDone:YES];
-          [defaults setObject:sellerName forKey:iTellAFriendAppSellerNameKey];
-        }
-        
-        [defaults setObject:applicationKey forKey:iTellAFriendAppKey];
-                
-        // release json
-        [json release];
-      }
-    }
-  }
-}
-
 - (NSString *)valueForKey:(NSString *)key inJSON:(NSString *)json
 {
   NSRange keyRange = [json rangeOfString:[NSString stringWithFormat:@"\"%@\"", key]];
@@ -333,6 +278,56 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
   return nil;
 }
 
+- (void)checkForConnectivityInBackground
+{
+  @synchronized (self)
+  {
+    NSString *iTunesServiceURL = [NSString stringWithFormat:iTellAppLookupURLFormat, appStoreCountry, appStoreID];
+    
+    NSError *error = nil;
+    NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:iTunesServiceURL] options:NSDataReadingUncached error:&error];
+    if (data)
+    {
+      // convert to string
+      NSString *json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+      
+      NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+      
+      // get genre  
+      if (!applicationGenreName)
+      {
+        NSString *genreName = [self valueForKey:@"primaryGenreName" inJSON:json];
+        [self performSelectorOnMainThread:@selector(setApplicationGenreName:) withObject:genreName waitUntilDone:YES];
+        [defaults setObject:genreName forKey:iTellAFriendAppGenreNameKey];
+      }
+      
+      if (!appStoreIconImage)
+      {
+        NSString *iconImage = [self valueForKey:@"artworkUrl100" inJSON:json];
+        [self performSelectorOnMainThread:@selector(setAppStoreIconImage:) withObject:iconImage waitUntilDone:YES];
+        [defaults setObject:iconImage forKey:iTellAFriendAppStoreIconImageKey];
+      }
+      
+      if (!applicationName)
+      {
+        NSString *appName = [self valueForKey:@"trackName" inJSON:json];
+        [self performSelectorOnMainThread:@selector(setApplicationName:) withObject:appName waitUntilDone:YES];
+        [defaults setObject:appName forKey:iTellAFriendAppNameKey];
+      }
+      
+      if (!applicationSellerName)
+      {
+        NSString *sellerName = [self valueForKey:@"sellerName" inJSON:json];
+        [self performSelectorOnMainThread:@selector(setApplicationSellerName:) withObject:sellerName waitUntilDone:YES];
+        [defaults setObject:sellerName forKey:iTellAFriendAppSellerNameKey];
+      }
+      
+      [defaults setObject:applicationKey forKey:iTellAFriendAppKey];
+      
+      // release json
+    }
+  }
+}
 
 - (void)promptIfNetworkAvailable
 {
@@ -340,21 +335,5 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
 }
 
 
-- (void)dealloc
-{
-
-  [appStoreCountry release];
-  [applicationName release];
-  [applicationKey release];
-  [applicationVersion release];
-  [applicationSellerName release];
-  
-  [messageTitle release];
-  [message release];
-  [appStoreIconImage release];
-  [appStoreURL release];
-  
-  [super dealloc];
-}
 
 @end

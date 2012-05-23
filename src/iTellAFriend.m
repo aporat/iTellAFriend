@@ -32,6 +32,7 @@ static NSString *const iTellAppLookupURLFormat = @"http://itunes.apple.com/looku
 static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.com/us/app/%@/id%d?mt=8&ls=1";
 
 @interface iTellAFriend ()
+- (NSString *)messageBody;
 - (void)promptIfNetworkAvailable;
 @end
 
@@ -124,7 +125,7 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
   [picker setSubject:self.messageTitle];
 
   
-  [picker setMessageBody:self.message isHTML:YES];
+  [picker setMessageBody:[self messageBody] isHTML:YES];
   
   return picker;
 }
@@ -146,9 +147,17 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
 
 - (NSString *)message
 {
+  if (message) {
+    return message;
+  }
+  return @"Check out this application on the App Store:";
+}
+
+- (NSString *)messageBody
+{
   // Fill out the email body text
   NSMutableString *emailBody = [NSMutableString stringWithFormat:@"<div> \n"
-                                "<p style=\"font:17px Helvetica,Arial,sans-serif\">Check out this application on the App Store:</p> \n"
+                                "<p style=\"font:17px Helvetica,Arial,sans-serif\">%@</p> \n"
                                 "<table border=\"0\"> \n"
                                 "<tbody> \n"
                                 "<tr> \n"
@@ -187,6 +196,7 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
                                 "</tbody> \n"
                                 "</table> \n"
                                 "</div>", 
+                                self.message,
                                 [self.appStoreURL absoluteString], 
                                 self.appStoreIconImage, 
                                 [self.appStoreURL absoluteString], 

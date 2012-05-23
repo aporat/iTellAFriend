@@ -31,6 +31,10 @@ static NSString *const iTellAFriendAppStoreIconImageKey = @"iTellAFriendAppStore
 static NSString *const iTellAppLookupURLFormat = @"http://itunes.apple.com/lookup?country=%@&id=%d";
 static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.com/us/app/%@/id%d?mt=8&ls=1";
 
+@interface iTellAFriend ()
+- (NSString *)messageBody;
+- (void)promptIfNetworkAvailable;
+@end
 
 @implementation iTellAFriend 
 
@@ -121,7 +125,7 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
   [picker setSubject:self.messageTitle];
 
   
-  [picker setMessageBody:self.message isHTML:YES];
+  [picker setMessageBody:[self messageBody] isHTML:YES];
   
   return picker;
 }
@@ -143,9 +147,17 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
 
 - (NSString *)message
 {
+  if (message) {
+    return message;
+  }
+  return @"Check out this application on the App Store:";
+}
+
+- (NSString *)messageBody
+{
   // Fill out the email body text
   NSMutableString *emailBody = [NSMutableString stringWithFormat:@"<div> \n"
-                                "<p style=\"font:17px Helvetica,Arial,sans-serif\">Check out this application on the App Store:</p> \n"
+                                "<p style=\"font:17px Helvetica,Arial,sans-serif\">%@</p> \n"
                                 "<table border=\"0\"> \n"
                                 "<tbody> \n"
                                 "<tr> \n"
@@ -184,6 +196,7 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
                                 "</tbody> \n"
                                 "</table> \n"
                                 "</div>", 
+                                self.message,
                                 [self.appStoreURL absoluteString], 
                                 self.appStoreIconImage, 
                                 [self.appStoreURL absoluteString], 
@@ -282,49 +295,55 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
 {
   @synchronized (self)
   {
-    NSString *iTunesServiceURL = [NSString stringWithFormat:iTellAppLookupURLFormat, appStoreCountry, appStoreID];
-    
-    NSError *error = nil;
-    NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:iTunesServiceURL] options:NSDataReadingUncached error:&error];
-    if (data)
-    {
-      // convert to string
-      NSString *json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-      
-      NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-      
-      // get genre  
-      if (!applicationGenreName)
+    @autoreleasepool {
+      NSString *iTunesServiceURL = [NSString stringWithFormat:iTellAppLookupURLFormat, appStoreCountry, appStoreID];
+
+      NSError *error = nil;
+      NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:iTunesServiceURL] options:NSDataReadingUncached error:&error];
+      if (data)
       {
-        NSString *genreName = [self valueForKey:@"primaryGenreName" inJSON:json];
-        [self performSelectorOnMainThread:@selector(setApplicationGenreName:) withObject:genreName waitUntilDone:YES];
-        [defaults setObject:genreName forKey:iTellAFriendAppGenreNameKey];
+        // convert to string
+        NSString *json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+        // get genre
+        if (!applicationGenreName)
+        {
+          NSString *genreName = [self valueForKey:@"primaryGenreName" inJSON:json];
+          [self performSelectorOnMainThread:@selector(setApplicationGenreName:) withObject:genreName waitUntilDone:YES];
+          [defaults setObject:genreName forKey:iTellAFriendAppGenreNameKey];
+        }
+
+        if (!appStoreIconImage)
+        {
+          NSString *iconImage = [self valueForKey:@"artworkUrl100" inJSON:json];
+          [self performSelectorOnMainThread:@selector(setAppStoreIconImage:) withObject:iconImage waitUntilDone:YES];
+          [defaults setObject:iconImage forKey:iTellAFriendAppStoreIconImageKey];
+        }
+
+        if (!applicationName)
+        {
+          NSString *appName = [self valueForKey:@"trackName" inJSON:json];
+          [self performSelectorOnMainThread:@selector(setApplicationName:) withObject:appName waitUntilDone:YES];
+          [defaults setObject:appName forKey:iTellAFriendAppNameKey];
+        }
+
+        if (!applicationSellerName)
+        {
+          NSString *sellerName = [self valueForKey:@"sellerName" inJSON:json];
+          [self performSelectorOnMainThread:@selector(setApplicationSellerName:) withObject:sellerName waitUntilDone:YES];
+          [defaults setObject:sellerName forKey:iTellAFriendAppSellerNameKey];
+        }
+
+        [defaults setObject:applicationKey forKey:iTellAFriendAppKey];
+        
+#if !__has_feature(objc_arc)
+        // release json
+        [json release];
+#endif
       }
-      
-      if (!appStoreIconImage)
-      {
-        NSString *iconImage = [self valueForKey:@"artworkUrl100" inJSON:json];
-        [self performSelectorOnMainThread:@selector(setAppStoreIconImage:) withObject:iconImage waitUntilDone:YES];
-        [defaults setObject:iconImage forKey:iTellAFriendAppStoreIconImageKey];
-      }
-      
-      if (!applicationName)
-      {
-        NSString *appName = [self valueForKey:@"trackName" inJSON:json];
-        [self performSelectorOnMainThread:@selector(setApplicationName:) withObject:appName waitUntilDone:YES];
-        [defaults setObject:appName forKey:iTellAFriendAppNameKey];
-      }
-      
-      if (!applicationSellerName)
-      {
-        NSString *sellerName = [self valueForKey:@"sellerName" inJSON:json];
-        [self performSelectorOnMainThread:@selector(setApplicationSellerName:) withObject:sellerName waitUntilDone:YES];
-        [defaults setObject:sellerName forKey:iTellAFriendAppSellerNameKey];
-      }
-      
-      [defaults setObject:applicationKey forKey:iTellAFriendAppKey];
-      
-      // release json
+
     }
   }
 }

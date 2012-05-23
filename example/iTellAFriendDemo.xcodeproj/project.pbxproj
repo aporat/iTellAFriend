@@ -13,7 +13,6 @@
 		6D2192F7152E13F40088C540 /* RootViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6D2192F5152E13F40088C540 /* RootViewController.xib */; };
 		6D2192FA152E13FA0088C540 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D2192F9152E13FA0088C540 /* AppDelegate.m */; };
 		6D219300152E14050088C540 /* iPhoneIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6D2192FB152E14050088C540 /* iPhoneIcon@2x.png */; };
-		6D219301152E14050088C540 /* iTellAFriendDemo-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6D2192FC152E14050088C540 /* iTellAFriendDemo-Info.plist */; };
 		6D219302152E14050088C540 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6D2192FE152E14050088C540 /* Localizable.strings */; };
 		6D219303152E14050088C540 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D2192FF152E14050088C540 /* main.m */; };
 		6D3E345214C4F54E0003B72B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D3E345114C4F54E0003B72B /* UIKit.framework */; };
@@ -205,7 +204,6 @@
 				6D2192F2152E13EC0088C540 /* SettingsViewController.xib in Resources */,
 				6D2192F7152E13F40088C540 /* RootViewController.xib in Resources */,
 				6D219300152E14050088C540 /* iPhoneIcon@2x.png in Resources */,
-				6D219301152E14050088C540 /* iTellAFriendDemo-Info.plist in Resources */,
 				6D219302152E14050088C540 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

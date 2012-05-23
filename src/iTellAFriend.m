@@ -324,7 +324,10 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
       
       [defaults setObject:applicationKey forKey:iTellAFriendAppKey];
       
+#if !__has_feature(objc_arc)
       // release json
+      [json release];
+#endif
     }
   }
 }

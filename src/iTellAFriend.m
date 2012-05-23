@@ -285,52 +285,55 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
 {
   @synchronized (self)
   {
-    NSString *iTunesServiceURL = [NSString stringWithFormat:iTellAppLookupURLFormat, appStoreCountry, appStoreID];
-    
-    NSError *error = nil;
-    NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:iTunesServiceURL] options:NSDataReadingUncached error:&error];
-    if (data)
-    {
-      // convert to string
-      NSString *json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-      
-      NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-      
-      // get genre  
-      if (!applicationGenreName)
+    @autoreleasepool {
+      NSString *iTunesServiceURL = [NSString stringWithFormat:iTellAppLookupURLFormat, appStoreCountry, appStoreID];
+
+      NSError *error = nil;
+      NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:iTunesServiceURL] options:NSDataReadingUncached error:&error];
+      if (data)
       {
-        NSString *genreName = [self valueForKey:@"primaryGenreName" inJSON:json];
-        [self performSelectorOnMainThread:@selector(setApplicationGenreName:) withObject:genreName waitUntilDone:YES];
-        [defaults setObject:genreName forKey:iTellAFriendAppGenreNameKey];
-      }
-      
-      if (!appStoreIconImage)
-      {
-        NSString *iconImage = [self valueForKey:@"artworkUrl100" inJSON:json];
-        [self performSelectorOnMainThread:@selector(setAppStoreIconImage:) withObject:iconImage waitUntilDone:YES];
-        [defaults setObject:iconImage forKey:iTellAFriendAppStoreIconImageKey];
-      }
-      
-      if (!applicationName)
-      {
-        NSString *appName = [self valueForKey:@"trackName" inJSON:json];
-        [self performSelectorOnMainThread:@selector(setApplicationName:) withObject:appName waitUntilDone:YES];
-        [defaults setObject:appName forKey:iTellAFriendAppNameKey];
-      }
-      
-      if (!applicationSellerName)
-      {
-        NSString *sellerName = [self valueForKey:@"sellerName" inJSON:json];
-        [self performSelectorOnMainThread:@selector(setApplicationSellerName:) withObject:sellerName waitUntilDone:YES];
-        [defaults setObject:sellerName forKey:iTellAFriendAppSellerNameKey];
-      }
-      
-      [defaults setObject:applicationKey forKey:iTellAFriendAppKey];
-      
+        // convert to string
+        NSString *json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+        // get genre
+        if (!applicationGenreName)
+        {
+          NSString *genreName = [self valueForKey:@"primaryGenreName" inJSON:json];
+          [self performSelectorOnMainThread:@selector(setApplicationGenreName:) withObject:genreName waitUntilDone:YES];
+          [defaults setObject:genreName forKey:iTellAFriendAppGenreNameKey];
+        }
+
+        if (!appStoreIconImage)
+        {
+          NSString *iconImage = [self valueForKey:@"artworkUrl100" inJSON:json];
+          [self performSelectorOnMainThread:@selector(setAppStoreIconImage:) withObject:iconImage waitUntilDone:YES];
+          [defaults setObject:iconImage forKey:iTellAFriendAppStoreIconImageKey];
+        }
+
+        if (!applicationName)
+        {
+          NSString *appName = [self valueForKey:@"trackName" inJSON:json];
+          [self performSelectorOnMainThread:@selector(setApplicationName:) withObject:appName waitUntilDone:YES];
+          [defaults setObject:appName forKey:iTellAFriendAppNameKey];
+        }
+
+        if (!applicationSellerName)
+        {
+          NSString *sellerName = [self valueForKey:@"sellerName" inJSON:json];
+          [self performSelectorOnMainThread:@selector(setApplicationSellerName:) withObject:sellerName waitUntilDone:YES];
+          [defaults setObject:sellerName forKey:iTellAFriendAppSellerNameKey];
+        }
+
+        [defaults setObject:applicationKey forKey:iTellAFriendAppKey];
+        
 #if !__has_feature(objc_arc)
-      // release json
-      [json release];
+        // release json
+        [json release];
 #endif
+      }
+
     }
   }
 }

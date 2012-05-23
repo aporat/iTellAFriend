@@ -31,6 +31,9 @@ static NSString *const iTellAFriendAppStoreIconImageKey = @"iTellAFriendAppStore
 static NSString *const iTellAppLookupURLFormat = @"http://itunes.apple.com/lookup?country=%@&id=%d";
 static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.com/us/app/%@/id%d?mt=8&ls=1";
 
+@interface iTellAFriend ()
+- (void)promptIfNetworkAvailable;
+@end
 
 @implementation iTellAFriend 
 

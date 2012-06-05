@@ -101,6 +101,11 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
     self.applicationSellerName = [defaults objectForKey:iTellAFriendAppSellerNameKey];
   }
   
+  // get the application name from the bundle
+  if (self.applicationName==nil) {
+    self.applicationName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"];
+  }
+  
   // check if this is a new version
   if (![[defaults objectForKey:iTellAFriendAppKey] isEqualToString:applicationKey]) {
     [self promptIfNetworkAvailable];  
@@ -110,7 +115,7 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 
 - (BOOL)canTellAFriend
 {
-  if ([MFMailComposeViewController canSendMail] && applicationName) {
+  if ([MFMailComposeViewController canSendMail] && self.applicationSellerName) {
     return true;
   }
   

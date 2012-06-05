@@ -52,7 +52,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-  return 1;
+  return 3;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -64,22 +64,33 @@
     cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier] autorelease];
   }
   
-  if (indexPath.section == 0) {
+  if (indexPath.row == 0) {
     cell.textLabel.text = NSLocalizedString(@"Tell a Friend", "");
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+  } else if (indexPath.row == 1) {
+    cell.textLabel.text = NSLocalizedString(@"Gift This App", "");
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+  } else if (indexPath.row == 2) {
+    cell.textLabel.text = NSLocalizedString(@"Rate in App Store", "");
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
   } 
+  
   return cell;
 }
 
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-  if (indexPath.section == 0) {
+  if (indexPath.row == 0) {
     if ([[iTellAFriend sharedInstance] canTellAFriend]) {
       UINavigationController* tellAFriendController = [[iTellAFriend sharedInstance] tellAFriendController];
       [self presentModalViewController:tellAFriendController animated:YES];
     }
-  } 
+  } else if (indexPath.row == 1) {
+    [[iTellAFriend sharedInstance] giftThisApp];
+  } else if (indexPath.row == 2) {
+    [[iTellAFriend sharedInstance] rateThisApp];
+  }
 }
 
 

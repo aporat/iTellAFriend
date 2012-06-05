@@ -27,9 +27,10 @@ static NSString *const iTellAFriendAppGenreNameKey = @"iTellAFriendAppGenreNameK
 static NSString *const iTellAFriendAppSellerNameKey = @"iTellAFriendAppSellerNameKey";
 static NSString *const iTellAFriendAppStoreIconImageKey = @"iTellAFriendAppStoreIconImageKey";
 
-
 static NSString *const iTellAppLookupURLFormat = @"http://itunes.apple.com/lookup?country=%@&id=%d";
 static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.com/us/app/%@/id%d?mt=8&ls=1";
+static NSString *const iTellAFriendRateiOSAppStoreURLFormat = @"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%d";
+static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/giftSongsWizard?gift=1&salableAdamId=%d&productType=C&pricingParameter=STDQ";
 
 @interface iTellAFriend ()
 - (NSString *)messageBody;
@@ -130,6 +131,16 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
   return picker;
 }
 
+- (void)giftThisApp
+{
+  [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:iTellAFriendGiftiOSiTunesURLFormat, self.appStoreID]]];
+
+}
+
+- (void)rateThisApp
+{
+[[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:iTellAFriendRateiOSAppStoreURLFormat, self.appStoreID]]];
+}
 
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error
 {

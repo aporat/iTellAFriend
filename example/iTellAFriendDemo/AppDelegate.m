@@ -42,7 +42,7 @@
   [self.window addSubview:_navigationController.view];  
   [self.window makeKeyAndVisible];
   
-  [iTellAFriend sharedInstance].appStoreID = 408981381;
+  [iTellAFriend sharedInstance].appStoreID = 408709785;
 
   
   return YES;

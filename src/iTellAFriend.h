@@ -54,4 +54,7 @@
 - (BOOL)canTellAFriend;
 - (UINavigationController *)tellAFriendController;
 
+- (void)giftThisApp;
+- (void)rateThisApp;
+
 @end

@@ -49,12 +49,33 @@
 @property (nonatomic, assign) NSUInteger appStoreID;
 @property (nonatomic, copy) NSURL *appStoreURL;
 
+
+/**
+ * Returns the shared iTellAFriend singleton
+ * @return The shared iTellAFriend singleton
+ */
 + (iTellAFriend *)sharedInstance;
 
+/**
+ * Returns if the app can display the tell a friend email composer
+ * @return YES if the app can display the tell a friend email composer
+ */
 - (BOOL)canTellAFriend;
+
+/**
+ * Returns a mail composer navigation view controller with a tell a friend email template
+ * @return mail composer view controller with a tell a friend email template
+ */
 - (UINavigationController *)tellAFriendController;
 
+/**
+ * Lanuches the gift app itunes screen
+ */
 - (void)giftThisApp;
+
+/**
+ * Lanuches the app store rate this app screen
+ */
 - (void)rateThisApp;
 
 @end

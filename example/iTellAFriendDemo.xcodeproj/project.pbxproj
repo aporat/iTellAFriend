@@ -13,7 +13,6 @@
 		6D2192F7152E13F40088C540 /* RootViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6D2192F5152E13F40088C540 /* RootViewController.xib */; };
 		6D2192FA152E13FA0088C540 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D2192F9152E13FA0088C540 /* AppDelegate.m */; };
 		6D219300152E14050088C540 /* iPhoneIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6D2192FB152E14050088C540 /* iPhoneIcon@2x.png */; };
-		6D219302152E14050088C540 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6D2192FE152E14050088C540 /* Localizable.strings */; };
 		6D219303152E14050088C540 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D2192FF152E14050088C540 /* main.m */; };
 		6D3E345214C4F54E0003B72B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D3E345114C4F54E0003B72B /* UIKit.framework */; };
 		6D3E345414C4F54E0003B72B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D3E345314C4F54E0003B72B /* Foundation.framework */; };
@@ -34,7 +33,6 @@
 		6D2192FB152E14050088C540 /* iPhoneIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iPhoneIcon@2x.png"; path = "iTellAFriendDemo/iPhoneIcon@2x.png"; sourceTree = SOURCE_ROOT; };
 		6D2192FC152E14050088C540 /* iTellAFriendDemo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "iTellAFriendDemo-Info.plist"; path = "iTellAFriendDemo/iTellAFriendDemo-Info.plist"; sourceTree = SOURCE_ROOT; };
 		6D2192FD152E14050088C540 /* iTellAFriendDemo-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "iTellAFriendDemo-Prefix.pch"; path = "iTellAFriendDemo/iTellAFriendDemo-Prefix.pch"; sourceTree = SOURCE_ROOT; };
-		6D2192FE152E14050088C540 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = iTellAFriendDemo/Localizable.strings; sourceTree = SOURCE_ROOT; };
 		6D2192FF152E14050088C540 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = iTellAFriendDemo/main.m; sourceTree = SOURCE_ROOT; };
 		6D3E344D14C4F54E0003B72B /* iTellAFriendDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iTellAFriendDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D3E345114C4F54E0003B72B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -79,7 +77,6 @@
 				6D2192FB152E14050088C540 /* iPhoneIcon@2x.png */,
 				6D2192FC152E14050088C540 /* iTellAFriendDemo-Info.plist */,
 				6D2192FD152E14050088C540 /* iTellAFriendDemo-Prefix.pch */,
-				6D2192FE152E14050088C540 /* Localizable.strings */,
 				6D2192FF152E14050088C540 /* main.m */,
 			);
 			name = "Supporting Files";
@@ -204,7 +201,6 @@
 				6D2192F2152E13EC0088C540 /* SettingsViewController.xib in Resources */,
 				6D2192F7152E13F40088C540 /* RootViewController.xib in Resources */,
 				6D219300152E14050088C540 /* iPhoneIcon@2x.png in Resources */,
-				6D219302152E14050088C540 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,6 +270,7 @@
 		6D3E346614C4F54E0003B72B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iTellAFriendDemo/iTellAFriendDemo-Prefix.pch";
 				INFOPLIST_FILE = "iTellAFriendDemo/iTellAFriendDemo-Info.plist";
@@ -286,6 +283,7 @@
 		6D3E346714C4F54E0003B72B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iTellAFriendDemo/iTellAFriendDemo-Prefix.pch";
 				INFOPLIST_FILE = "iTellAFriendDemo/iTellAFriendDemo-Info.plist";

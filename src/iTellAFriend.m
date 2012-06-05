@@ -124,8 +124,6 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
   picker.mailComposeDelegate = self;
   
   [picker setSubject:self.messageTitle];
-
-  
   [picker setMessageBody:[self messageBody] isHTML:YES];
   
   return picker;
@@ -134,7 +132,6 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 - (void)giftThisApp
 {
   [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:iTellAFriendGiftiOSiTunesURLFormat, self.appStoreID]]];
-
 }
 
 - (void)rateThisApp

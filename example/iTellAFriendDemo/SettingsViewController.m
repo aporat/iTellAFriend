@@ -86,10 +86,12 @@
       [self presentModalViewController:tellAFriendController animated:YES];
     }
   } else if (indexPath.row == 1) {
-    [[iTellAFriend sharedInstance] giftThisApp];
+    [[iTellAFriend sharedInstance] giftThisAppWithAlertView:YES];
   } else if (indexPath.row == 2) {
-    [[iTellAFriend sharedInstance] rateThisApp];
+    [[iTellAFriend sharedInstance] rateThisAppWithAlertView:YES];
   }
+  
+  [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 

@@ -20,7 +20,7 @@
 #import <Foundation/Foundation.h>
 #import <MessageUI/MessageUI.h>
 
-@interface iTellAFriend : NSObject <MFMailComposeViewControllerDelegate> {
+@interface iTellAFriend : NSObject <MFMailComposeViewControllerDelegate, UIAlertViewDelegate> {
   NSString *appStoreCountry;
   NSString *applicationName;
   NSString *applicationVersion;
@@ -74,8 +74,20 @@
 - (void)giftThisApp;
 
 /**
+ * Lanuches the gift app itunes screen, with optional informational alert view
+ * @param alertView optional informational alert view
+ */
+- (void)giftThisAppWithAlertView:(BOOL)alertView;
+
+/**
  * Lanuches the app store rate this app screen
  */
 - (void)rateThisApp;
+
+/**
+ * Lanuches the app store rate this app screen, with optional informational alert view
+ * @param alertView optional informational alert view
+ */
+- (void)rateThisAppWithAlertView:(BOOL)alertView;
 
 @end

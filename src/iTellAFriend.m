@@ -32,6 +32,8 @@ static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.
 static NSString *const iTellAFriendRateiOSAppStoreURLFormat = @"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%d";
 static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/giftSongsWizard?gift=1&salableAdamId=%d&productType=C&pricingParameter=STDQ";
 
+#define REQUEST_TIMEOUT 60.0
+
 @interface iTellAFriend ()
 - (NSString *)messageBody;
 - (void)promptIfNetworkAvailable;
@@ -272,75 +274,75 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 
 - (NSString *)valueForKey:(NSString *)key inJSON:(NSString *)json
 {
-  NSRange keyRange = [json rangeOfString:[NSString stringWithFormat:@"\"%@\"", key]];
-  if (keyRange.location != NSNotFound)
-  {
-    NSInteger start = keyRange.location + keyRange.length;
-    NSRange valueStart = [json rangeOfString:@":" options:0 range:NSMakeRange(start, [json length] - start)];
-    if (valueStart.location != NSNotFound)
+    NSRange keyRange = [json rangeOfString:[NSString stringWithFormat:@"\"%@\"", key]];
+    if (keyRange.location != NSNotFound)
     {
-      start = valueStart.location + 1;
-      NSRange valueEnd = [json rangeOfString:@"," options:0 range:NSMakeRange(start, [json length] - start)];
-      if (valueEnd.location != NSNotFound)
-      {
-        NSString *value = [json substringWithRange:NSMakeRange(start, valueEnd.location - start)];
-        value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        while ([value hasPrefix:@"\""] && ![value hasSuffix:@"\""])
+        NSInteger start = keyRange.location + keyRange.length;
+        NSRange valueStart = [json rangeOfString:@":" options:0 range:NSMakeRange(start, [json length] - start)];
+        if (valueStart.location != NSNotFound)
         {
-          if (valueEnd.location == NSNotFound)
-          {
-            break;
-          }
-          NSInteger newStart = valueEnd.location + 1;
-          valueEnd = [json rangeOfString:@"," options:0 range:NSMakeRange(newStart, [json length] - newStart)];
-          value = [json substringWithRange:NSMakeRange(start, valueEnd.location - start)];
-          value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+            start = valueStart.location + 1;
+            NSRange valueEnd = [json rangeOfString:@"," options:0 range:NSMakeRange(start, [json length] - start)];
+            if (valueEnd.location != NSNotFound)
+            {
+                NSString *value = [json substringWithRange:NSMakeRange(start, valueEnd.location - start)];
+                value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                while ([value hasPrefix:@"\""] && ![value hasSuffix:@"\""])
+                {
+                    if (valueEnd.location == NSNotFound)
+                    {
+                        break;
+                    }
+                    NSInteger newStart = valueEnd.location + 1;
+                    valueEnd = [json rangeOfString:@"," options:0 range:NSMakeRange(newStart, [json length] - newStart)];
+                    value = [json substringWithRange:NSMakeRange(start, valueEnd.location - start)];
+                    value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                }
+                
+                value = [value stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"\""]];
+                value = [value stringByReplacingOccurrencesOfString:@"\\\\" withString:@"\\"];
+                value = [value stringByReplacingOccurrencesOfString:@"\\/" withString:@"/"];
+                value = [value stringByReplacingOccurrencesOfString:@"\\\"" withString:@"\""];
+                value = [value stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
+                value = [value stringByReplacingOccurrencesOfString:@"\\r" withString:@"\r"];
+                value = [value stringByReplacingOccurrencesOfString:@"\\t" withString:@"\t"];
+                value = [value stringByReplacingOccurrencesOfString:@"\\f" withString:@"\f"];
+                value = [value stringByReplacingOccurrencesOfString:@"\\b" withString:@"\f"];
+                
+                while (YES)
+                {
+                    NSRange unicode = [value rangeOfString:@"\\u"];
+                    if (unicode.location == NSNotFound)
+                    {
+                        break;
+                    }
+                    
+                    uint32_t c = 0;
+                    NSString *hex = [value substringWithRange:NSMakeRange(unicode.location + 2, 4)];
+                    NSScanner *scanner = [NSScanner scannerWithString:hex];
+                    [scanner scanHexInt:&c];
+                    
+                    if (c <= 0xffff)
+                    {
+                        value = [value stringByReplacingCharactersInRange:NSMakeRange(unicode.location, 6) withString:[NSString stringWithFormat:@"%C", (unichar)c]];
+                    }
+                    else
+                    {
+                        //convert character to surrogate pair
+                        uint16_t x = (uint16_t)c;
+                        uint16_t u = (c >> 16) & ((1 << 5) - 1);
+                        uint16_t w = (uint16_t)u - 1;
+                        unichar high = 0xd800 | (w << 6) | x >> 10;
+                        unichar low = (uint16_t)(0xdc00 | (x & ((1 << 10) - 1)));
+                        
+                        value = [value stringByReplacingCharactersInRange:NSMakeRange(unicode.location, 6) withString:[NSString stringWithFormat:@"%C%C", high, low]];
+                    }
+                }
+                return value;
+            }
         }
-        
-        value = [value stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"\""]];
-        value = [value stringByReplacingOccurrencesOfString:@"\\\\" withString:@"\\"];
-        value = [value stringByReplacingOccurrencesOfString:@"\\/" withString:@"/"];
-        value = [value stringByReplacingOccurrencesOfString:@"\\\"" withString:@"\""];
-        value = [value stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
-        value = [value stringByReplacingOccurrencesOfString:@"\\r" withString:@"\r"];
-        value = [value stringByReplacingOccurrencesOfString:@"\\t" withString:@"\t"];
-        value = [value stringByReplacingOccurrencesOfString:@"\\f" withString:@"\f"];
-        value = [value stringByReplacingOccurrencesOfString:@"\\b" withString:@"\f"];
-        
-        while (YES)
-        {
-          NSRange unicode = [value rangeOfString:@"\\u"];
-          if (unicode.location == NSNotFound)
-          {
-            break;
-          }
-          
-          uint32_t c = 0;
-          NSString *hex = [value substringWithRange:NSMakeRange(unicode.location + 2, 4)];
-          NSScanner *scanner = [NSScanner scannerWithString:hex];
-          [scanner scanHexInt:&c];
-          
-          if (c <= 0xffff)
-          {
-            value = [value stringByReplacingCharactersInRange:NSMakeRange(unicode.location, 6) withString:[NSString stringWithFormat:@"%C", (unichar)c]];
-          }
-          else
-          {
-            // convert character to surrogate pair
-            uint16_t x = (uint16_t)c;
-            uint16_t u = (c >> 16) & ((1 << 5) - 1);
-            uint16_t w = (uint16_t)u - 1;
-            unichar high = 0xd800 | (w << 6) | x >> 10;
-            unichar low = (uint16_t)(0xdc00 | (x & ((1 << 10) - 1)));
-            
-            value = [value stringByReplacingCharactersInRange:NSMakeRange(unicode.location, 6) withString:[NSString stringWithFormat:@"%C%C", high, low]];
-          }
-        }
-        return value;
-      }
     }
-  }
-  return nil;
+    return nil;
 }
 
 - (void)checkForConnectivityInBackground
@@ -350,10 +352,13 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
     @autoreleasepool {
       NSString *iTunesServiceURL = [NSString stringWithFormat:iTellAppLookupURLFormat, appStoreCountry, appStoreID];
 
-      NSError *error = nil;
-      NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:iTunesServiceURL] options:NSDataReadingUncached error:&error];
-      if (data)
-      {
+        NSError *error = nil;
+        NSURLResponse *response = nil;
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:iTunesServiceURL] cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:REQUEST_TIMEOUT];
+        NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+        if (data)
+        {
+
         // convert to string
         NSString *json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		537C8C58168ABF6E008389CC /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 537C8C57168ABF6E008389CC /* Default-568h@2x.png */; };
 		6D2192F1152E13EC0088C540 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D2192EF152E13EC0088C540 /* SettingsViewController.m */; };
 		6D2192F2152E13EC0088C540 /* SettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6D2192F0152E13EC0088C540 /* SettingsViewController.xib */; };
 		6D2192F6152E13F40088C540 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D2192F4152E13F40088C540 /* RootViewController.m */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		537C8C57168ABF6E008389CC /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		6D2192EE152E13EC0088C540 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SettingsViewController.h; path = iTellAFriendDemo/SettingsViewController.h; sourceTree = SOURCE_ROOT; };
 		6D2192EF152E13EC0088C540 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SettingsViewController.m; path = iTellAFriendDemo/SettingsViewController.m; sourceTree = SOURCE_ROOT; };
 		6D2192F0152E13EC0088C540 /* SettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SettingsViewController.xib; path = iTellAFriendDemo/SettingsViewController.xib; sourceTree = SOURCE_ROOT; };
@@ -85,6 +87,7 @@
 		6D3E344214C4F54D0003B72B = {
 			isa = PBXGroup;
 			children = (
+				537C8C57168ABF6E008389CC /* Default-568h@2x.png */,
 				6D2F0BD414C51CCA00C1862D /* Demo App */,
 				6D3E345014C4F54E0003B72B /* Frameworks */,
 				6D3E344E14C4F54E0003B72B /* Products */,
@@ -201,6 +204,7 @@
 				6D2192F2152E13EC0088C540 /* SettingsViewController.xib in Resources */,
 				6D2192F7152E13F40088C540 /* RootViewController.xib in Resources */,
 				6D219300152E14050088C540 /* iPhoneIcon@2x.png in Resources */,
+				537C8C58168ABF6E008389CC /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

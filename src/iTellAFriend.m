@@ -19,6 +19,11 @@
 
 #import "iTellAFriend.h"
 
+#import <Availability.h>
+#if !__has_feature(objc_arc)
+#error This class requires automatic reference counting
+#endif
+
 static iTellAFriend *sharedInstance = nil;
 
 static NSString *const iTellAFriendAppKey = @"iTellAFriendAppKey";
@@ -266,79 +271,6 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
     return [NSURL URLWithString:[NSString stringWithFormat:iTellAFriendiOSAppStoreURLFormat, @"app", appStoreID]];
 }
 
-- (NSString *)valueForKey:(NSString *)key inJSON:(NSString *)json
-{
-    NSRange keyRange = [json rangeOfString:[NSString stringWithFormat:@"\"%@\"", key]];
-    if (keyRange.location != NSNotFound)
-    {
-        NSInteger start = keyRange.location + keyRange.length;
-        NSRange valueStart = [json rangeOfString:@":" options:0 range:NSMakeRange(start, [json length] - start)];
-        if (valueStart.location != NSNotFound)
-        {
-            start = valueStart.location + 1;
-            NSRange valueEnd = [json rangeOfString:@"," options:0 range:NSMakeRange(start, [json length] - start)];
-            if (valueEnd.location != NSNotFound)
-            {
-                NSString *value = [json substringWithRange:NSMakeRange(start, valueEnd.location - start)];
-                value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-                while ([value hasPrefix:@"\""] && ![value hasSuffix:@"\""])
-                {
-                    if (valueEnd.location == NSNotFound)
-                    {
-                        break;
-                    }
-                    NSInteger newStart = valueEnd.location + 1;
-                    valueEnd = [json rangeOfString:@"," options:0 range:NSMakeRange(newStart, [json length] - newStart)];
-                    value = [json substringWithRange:NSMakeRange(start, valueEnd.location - start)];
-                    value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-                }
-                
-                value = [value stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"\""]];
-                value = [value stringByReplacingOccurrencesOfString:@"\\\\" withString:@"\\"];
-                value = [value stringByReplacingOccurrencesOfString:@"\\/" withString:@"/"];
-                value = [value stringByReplacingOccurrencesOfString:@"\\\"" withString:@"\""];
-                value = [value stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
-                value = [value stringByReplacingOccurrencesOfString:@"\\r" withString:@"\r"];
-                value = [value stringByReplacingOccurrencesOfString:@"\\t" withString:@"\t"];
-                value = [value stringByReplacingOccurrencesOfString:@"\\f" withString:@"\f"];
-                value = [value stringByReplacingOccurrencesOfString:@"\\b" withString:@"\f"];
-                
-                while (YES)
-                {
-                    NSRange unicode = [value rangeOfString:@"\\u"];
-                    if (unicode.location == NSNotFound)
-                    {
-                        break;
-                    }
-                    
-                    uint32_t c = 0;
-                    NSString *hex = [value substringWithRange:NSMakeRange(unicode.location + 2, 4)];
-                    NSScanner *scanner = [NSScanner scannerWithString:hex];
-                    [scanner scanHexInt:&c];
-                    
-                    if (c <= 0xffff)
-                    {
-                        value = [value stringByReplacingCharactersInRange:NSMakeRange(unicode.location, 6) withString:[NSString stringWithFormat:@"%C", (unichar)c]];
-                    }
-                    else
-                    {
-                        //convert character to surrogate pair
-                        uint16_t x = (uint16_t)c;
-                        uint16_t u = (c >> 16) & ((1 << 5) - 1);
-                        uint16_t w = (uint16_t)u - 1;
-                        unichar high = 0xd800 | (w << 6) | x >> 10;
-                        unichar low = (uint16_t)(0xdc00 | (x & ((1 << 10) - 1)));
-                        
-                        value = [value stringByReplacingCharactersInRange:NSMakeRange(unicode.location, 6) withString:[NSString stringWithFormat:@"%C%C", high, low]];
-                    }
-                }
-                return value;
-            }
-        }
-    }
-    return nil;
-}
-
 - (void)checkForConnectivityInBackground
 {
     @synchronized (self)
@@ -353,41 +285,42 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
         {
             
             // convert to string
-            NSString *json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            
-            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-            
-            // get genre
-            if (!applicationGenreName)
-            {
-                NSString *genreName = [self valueForKey:@"primaryGenreName" inJSON:json];
-                [self performSelectorOnMainThread:@selector(setApplicationGenreName:) withObject:genreName waitUntilDone:YES];
-                [defaults setObject:genreName forKey:iTellAFriendAppGenreNameKey];
+            NSDictionary* json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+            if (json!=nil && error==nil) {
+                
+                NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                
+                // get genre
+                if (!applicationGenreName)
+                {
+                    NSString *genreName = [json valueForKey:@"primaryGenreName"];
+                    [self performSelectorOnMainThread:@selector(setApplicationGenreName:) withObject:genreName waitUntilDone:YES];
+                    [defaults setObject:genreName forKey:iTellAFriendAppGenreNameKey];
+                }
+                
+                if (!appStoreIconImage)
+                {
+                    NSString *iconImage = [json valueForKey:@"artworkUrl100"];
+                    [self performSelectorOnMainThread:@selector(setAppStoreIconImage:) withObject:iconImage waitUntilDone:YES];
+                    [defaults setObject:iconImage forKey:iTellAFriendAppStoreIconImageKey];
+                }
+                
+                if (!applicationName)
+                {
+                    NSString *appName = [json valueForKey:@"trackName"];
+                    [self performSelectorOnMainThread:@selector(setApplicationName:) withObject:appName waitUntilDone:YES];
+                    [defaults setObject:appName forKey:iTellAFriendAppNameKey];
+                }
+                
+                if (!applicationSellerName)
+                {
+                    NSString *sellerName = [json valueForKey:@"sellerName"];
+                    [self performSelectorOnMainThread:@selector(setApplicationSellerName:) withObject:sellerName waitUntilDone:YES];
+                    [defaults setObject:sellerName forKey:iTellAFriendAppSellerNameKey];
+                }
+                
+                [defaults setObject:applicationKey forKey:iTellAFriendAppKey];
             }
-            
-            if (!appStoreIconImage)
-            {
-                NSString *iconImage = [self valueForKey:@"artworkUrl100" inJSON:json];
-                [self performSelectorOnMainThread:@selector(setAppStoreIconImage:) withObject:iconImage waitUntilDone:YES];
-                [defaults setObject:iconImage forKey:iTellAFriendAppStoreIconImageKey];
-            }
-            
-            if (!applicationName)
-            {
-                NSString *appName = [self valueForKey:@"trackName" inJSON:json];
-                [self performSelectorOnMainThread:@selector(setApplicationName:) withObject:appName waitUntilDone:YES];
-                [defaults setObject:appName forKey:iTellAFriendAppNameKey];
-            }
-            
-            if (!applicationSellerName)
-            {
-                NSString *sellerName = [self valueForKey:@"sellerName" inJSON:json];
-                [self performSelectorOnMainThread:@selector(setApplicationSellerName:) withObject:sellerName waitUntilDone:YES];
-                [defaults setObject:sellerName forKey:iTellAFriendAppSellerNameKey];
-            }
-            
-            [defaults setObject:applicationKey forKey:iTellAFriendAppKey];
-            
         }
     }
 }

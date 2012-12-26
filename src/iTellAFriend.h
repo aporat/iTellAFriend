@@ -20,11 +20,6 @@
 #import <Foundation/Foundation.h>
 #import <MessageUI/MessageUI.h>
 
-#import <Availability.h>
-#if !__has_feature(objc_arc)
-#error This class requires automatic reference counting
-#endif
-
 @interface iTellAFriend : NSObject <MFMailComposeViewControllerDelegate, UIAlertViewDelegate> {
   NSString *appStoreCountry;
   NSString *applicationName;

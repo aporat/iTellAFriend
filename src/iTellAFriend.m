@@ -277,6 +277,8 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
     {
         NSString *iTunesServiceURL = [NSString stringWithFormat:iTellAFriendAppLookupURLFormat, appStoreCountry, appStoreID];
         
+        ITELLLog(@"Requesting info from iTunes Service %@", iTunesServiceURL);
+        
         NSError *error = nil;
         NSURLResponse *response = nil;
         NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:iTunesServiceURL] cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:REQUEST_TIMEOUT];
@@ -290,36 +292,50 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
                 
                 NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
                 
+                NSArray* results = [json objectForKey:@"results"];
+                
+                if (results==nil || [results count]==0) {
+                    ITELLLog(@"Unable to find apple id %d", appStoreID);
+
+                    return;
+                }
+                
+                NSDictionary* result = [results objectAtIndex:0];
+                
                 // get genre
                 if (!applicationGenreName)
                 {
-                    NSString *genreName = [json valueForKey:@"primaryGenreName"];
+                    NSString *genreName = [result valueForKey:@"primaryGenreName"];
                     [self performSelectorOnMainThread:@selector(setApplicationGenreName:) withObject:genreName waitUntilDone:YES];
                     [defaults setObject:genreName forKey:iTellAFriendAppGenreNameKey];
                 }
                 
                 if (!appStoreIconImage)
                 {
-                    NSString *iconImage = [json valueForKey:@"artworkUrl100"];
+                    NSString *iconImage = [result valueForKey:@"artworkUrl100"];
                     [self performSelectorOnMainThread:@selector(setAppStoreIconImage:) withObject:iconImage waitUntilDone:YES];
                     [defaults setObject:iconImage forKey:iTellAFriendAppStoreIconImageKey];
                 }
                 
                 if (!applicationName)
                 {
-                    NSString *appName = [json valueForKey:@"trackName"];
+                    NSString *appName = [result valueForKey:@"trackName"];
                     [self performSelectorOnMainThread:@selector(setApplicationName:) withObject:appName waitUntilDone:YES];
                     [defaults setObject:appName forKey:iTellAFriendAppNameKey];
                 }
                 
                 if (!applicationSellerName)
                 {
-                    NSString *sellerName = [json valueForKey:@"sellerName"];
+                    NSString *sellerName = [result valueForKey:@"sellerName"];
                     [self performSelectorOnMainThread:@selector(setApplicationSellerName:) withObject:sellerName waitUntilDone:YES];
                     [defaults setObject:sellerName forKey:iTellAFriendAppSellerNameKey];
                 }
                 
                 [defaults setObject:applicationKey forKey:iTellAFriendAppKey];
+                ITELLLog(@"Loaded apple id information %d", appStoreID);
+
+            } else {
+                ITELLLog(@"Unable to find apple id %d", appStoreID);
             }
         }
     }

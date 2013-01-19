@@ -20,6 +20,18 @@
 #import <Foundation/Foundation.h>
 #import <MessageUI/MessageUI.h>
 
+#ifdef DEBUG
+// First, check if we can use Cocoalumberjack for logging
+#ifdef LOG_VERBOSE
+extern int ddLogLevel;
+#define ITELLLog(...)  DDLogVerbose(__VA_ARGS__)
+#else
+#define ITELLLog(...) NSLog(@"%s(%p) %@", __PRETTY_FUNCTION__, self, [NSString stringWithFormat:__VA_ARGS__])
+#endif
+#else
+#define ITELLLog(...) ((void)0)
+#endif
+
 @interface iTellAFriend : NSObject <MFMailComposeViewControllerDelegate, UIAlertViewDelegate> {
   NSString *appStoreCountry;
   NSString *applicationName;

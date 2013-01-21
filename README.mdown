@@ -7,25 +7,10 @@ Installation
 ==============================
 To install iTellAFriend into your app, drag the iTellAFriend.h, .m into your project. 
 
-To enable iTellAFriend in your application you need to initialize iTellAFriend before the app has finished launching. The easiest way to do this is to add the iTellAFriend configuration code in your AppDelegate's, like this:
+iTellAFriend requires no configuration at all and will use the application's bundle ID to look the app ID up on the App Store.
 
 
-```
-
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-    
-....
-  
-  [iTellAFriend sharedInstance].appStoreID = 408981381;
-
-  
-  return YES;
-}
-
-```
-
-To present the iTellAFriend controller, use:
+To present the Tell A Friend email controller, use:
 
 ```
     if ([[iTellAFriend sharedInstance] canTellAFriend]) {
@@ -34,6 +19,18 @@ To present the iTellAFriend controller, use:
     }
 ```
 
+
+To present the gift this app dialog:
+
+```
+ [[iTellAFriend sharedInstance] giftThisAppWithAlertView:YES];
+```
+
+To present the rate this app dialog:
+
+```
+    [[iTellAFriend sharedInstance] rateThisAppWithAlertView:YES];
+```
 
 
 ![](https://github.com/aporat/iTellAFriend/raw/master/screenshots/iphone-1.png) 

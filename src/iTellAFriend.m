@@ -32,7 +32,7 @@ static NSString *const iTellAFriendAppGenreNameKey = @"iTellAFriendAppGenreNameK
 static NSString *const iTellAFriendAppSellerNameKey = @"iTellAFriendAppSellerNameKey";
 static NSString *const iTellAFriendAppStoreIconImageKey = @"iTellAFriendAppStoreIconImageKey";
 
-static NSString *const iTellAFriendAppLookupURLFormat = @"http://itunes.apple.com/lookup?country=%@&id=%d";
+static NSString *const iTellAFriendAppLookupURLFormat = @"http://itunes.apple.com/%@/lookup";
 static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.com/us/app/%@/id%d?mt=8&ls=1";
 static NSString *const iTellAFriendRateiOSAppStoreURLFormat = @"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%d";
 static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/giftSongsWizard?gift=1&salableAdamId=%d&productType=C&pricingParameter=STDQ";
@@ -60,6 +60,11 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 @synthesize appStoreURL;
 
 
++ (void)load
+{
+    [self performSelectorOnMainThread:@selector(sharedInstance) withObject:nil waitUntilDone:NO];
+}
+
 + (iTellAFriend *)sharedInstance
 {
 	@synchronized(self) {
@@ -74,7 +79,10 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 {
     if ((self = [super init]))
     {
-        
+
+        // get bundle id from plist
+        self.applicationBundleID = [[NSBundle mainBundle] bundleIdentifier];
+
         // get country
         self.appStoreCountry = [(NSLocale *)[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
         
@@ -86,18 +94,23 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
         }
         
         
-        
+        [self performSelectorOnMainThread:@selector(applicationLaunched) withObject:nil waitUntilDone:NO];
+
     }
     return self;
 }
 
-- (void)setAppStoreID:(NSUInteger)appStore
+- (void)applicationLaunched
 {
-    
-    appStoreID = appStore;
-    
     // app key used to cache the app data
-    self.applicationKey = [NSString stringWithFormat:@"%d-%@", appStore, applicationVersion];
+    if (self.appStoreID)
+    {
+        self.applicationKey = [NSString stringWithFormat:@"%d-%@", self.appStoreID, self.applicationVersion];
+    }
+    else
+    {
+        self.applicationKey = [NSString stringWithFormat:@"%@-%@", self.applicationBundleID, self.applicationVersion];
+    }
     
     // load the settings info from the app NSUserDefaults, to avoid  http requests
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -275,7 +288,16 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 {
     @synchronized (self)
     {
-        NSString *iTunesServiceURL = [NSString stringWithFormat:iTellAFriendAppLookupURLFormat, appStoreCountry, appStoreID];
+        NSString *iTunesServiceURL = [NSString stringWithFormat:iTellAFriendAppLookupURLFormat, appStoreCountry];
+        
+        if (self.appStoreID)
+        {
+            iTunesServiceURL = [iTunesServiceURL stringByAppendingFormat:@"?id=%u", (unsigned int)self.appStoreID];
+        }
+        else
+        {
+            iTunesServiceURL = [iTunesServiceURL stringByAppendingFormat:@"?bundleId=%@", self.applicationBundleID];
+        }
         
         ITELLLog(@"Requesting info from iTunes Service %@", iTunesServiceURL);
         
@@ -295,7 +317,7 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
                 NSArray* results = [json objectForKey:@"results"];
                 
                 if (results==nil || [results count]==0) {
-                    ITELLLog(@"Unable to find apple id %d", appStoreID);
+                    ITELLLog(@"Unable to find apple id %@", self.applicationKey);
 
                     return;
                 }
@@ -332,10 +354,10 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
                 }
                 
                 [defaults setObject:applicationKey forKey:iTellAFriendAppKey];
-                ITELLLog(@"Loaded apple id information %d", appStoreID);
+                ITELLLog(@"Loaded apple id information %@", self.applicationKey);
 
             } else {
-                ITELLLog(@"Unable to find apple id %d", appStoreID);
+                ITELLLog(@"Unable to find apple id %@", self.applicationKey);
             }
         }
     }

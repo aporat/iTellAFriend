@@ -1,5 +1,5 @@
 //
-// Copyright 2011-2012 Kosher Penguin LLC 
+// Copyright 2011-2012 Kosher Penguin LLC
 // Created by Adar Porat (https://github.com/aporat) on 1/16/2012.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,19 +28,21 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     
-  self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-  self.window.backgroundColor = [UIColor whiteColor];
-  
-  RootViewController* vc = [[RootViewController alloc] initWithNibName:@"RootViewController" bundle:nil];
-  
-  _navigationController = [[UINavigationController alloc] initWithRootViewController:vc];
-  [self.window addSubview:_navigationController.view];  
-  [self.window makeKeyAndVisible];
-  
-  [iTellAFriend sharedInstance].appStoreID = 408709785;
-
-  
-  return YES;
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.backgroundColor = [UIColor whiteColor];
+    
+    RootViewController* vc = [[RootViewController alloc] initWithNibName:@"RootViewController" bundle:nil];
+    
+    _navigationController = [[UINavigationController alloc] initWithRootViewController:vc];
+    [self.window addSubview:_navigationController.view];
+    [self.window makeKeyAndVisible];
+    
+    
+    // Used for debug. Normally, the bundle id will automatically be used
+    [iTellAFriend sharedInstance].appStoreID = 408709785;
+    
+    
+    return YES;
 }
 
 

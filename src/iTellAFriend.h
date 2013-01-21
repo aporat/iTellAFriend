@@ -53,6 +53,7 @@ extern int ddLogLevel;
 @property (nonatomic, copy) NSString *applicationVersion;
 @property (nonatomic, copy) NSString *applicationGenreName;
 @property (nonatomic, copy) NSString *applicationSellerName;
+@property (nonatomic, copy) NSString *applicationBundleID;
 @property (nonatomic, copy) NSString *appStoreIconImage;
 
 @property (nonatomic, copy) NSString *applicationKey;

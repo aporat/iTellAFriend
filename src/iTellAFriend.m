@@ -135,7 +135,7 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 
 - (BOOL)canTellAFriend
 {
-    if ([MFMailComposeViewController canSendMail] && self.applicationSellerName) {
+    if ([MFMailComposeViewController canSendMail]) {
         return true;
     }
     
@@ -221,6 +221,39 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 
 - (NSString *)messageBody
 {
+    // if we couldn't fetch the app information, use a simple fallback template
+    if (self.applicationSellerName==nil) {
+        // Fill out the email body text
+        NSMutableString *emailBody = [NSMutableString stringWithFormat:@"<div> \n"
+                                      "<p style=\"font:17px Helvetica,Arial,sans-serif\">%@</p> \n"
+                                      "<h1 style=\"font:bold 16px Helvetica,Arial,sans-serif\"><a target=\"_blank\" href=\"%@\">%@</a></h1> \n"
+                                      "<br> \n"
+                                      "<table align=\"center\"> \n"
+                                      "<tbody> \n"
+                                      "<tr> \n"
+                                      "<td valign=\"top\" align=\"center\"> \n"
+                                      "<span style=\"font-family:Helvetica,Arial;font-size:11px;color:#696969;font-weight:bold\"> \n"
+                                      "</td> \n"
+                                      "</tr> \n"
+                                      "<tr> \n"
+                                      "<td align=\"left\"> \n"
+                                      "<span style=\"font-family:Helvetica,Arial;font-size:11px;color:#696969\"> \n"
+                                      "Please note that you have not been added to any email lists. \n"
+                                      "</span> \n"
+                                      "</td> \n"
+                                      "</tr> \n"
+                                      "</tbody> \n"
+                                      "</table> \n"
+                                      "</div>",
+                                      self.message,
+                                      [self.appStoreURL absoluteString],
+                                      self.applicationName
+                                      ];
+        
+        return emailBody;
+
+    }
+    
     // Fill out the email body text
     NSMutableString *emailBody = [NSMutableString stringWithFormat:@"<div> \n"
                                   "<p style=\"font:17px Helvetica,Arial,sans-serif\">%@</p> \n"

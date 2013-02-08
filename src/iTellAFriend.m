@@ -100,6 +100,20 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
     return self;
 }
 
++ (id)getRootViewController {
+    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+    if (window.windowLevel != UIWindowLevelNormal) {
+        NSArray *windows = [[UIApplication sharedApplication] windows];
+        for(window in windows) {
+            if (window.windowLevel == UIWindowLevelNormal) {
+                break;
+            }
+        }
+    }
+    
+    return [[[window subviews] objectAtIndex:0] nextResponder];
+}
+
 - (void)applicationLaunched
 {
     // app key used to cache the app data
@@ -156,7 +170,7 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 
 - (void)giftThisApp
 {
-    [self giftThisAppWithAlertView:NO];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:iTellAFriendGiftiOSiTunesURLFormat, self.appStoreID]]];
 }
 
 - (void)giftThisAppWithAlertView:(BOOL)alertView
@@ -167,13 +181,29 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
         [alertView show];
         
     } else {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:iTellAFriendGiftiOSiTunesURLFormat, self.appStoreID]]];
+        [self giftThisApp];
     }
 }
 
 - (void)rateThisApp
 {
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:iTellAFriendRateiOSAppStoreURLFormat, self.appStoreID]]];
+	if (NSStringFromClass([SKStoreProductViewController class]) != nil) {
+        // Use the in-app StoreKit view if available (iOS 6)
+		SKStoreProductViewController *storeViewController = [[SKStoreProductViewController alloc] init];
+		NSNumber *appId = [NSNumber numberWithInteger:self.appStoreID];
+		[storeViewController loadProductWithParameters:@{SKStoreProductParameterITunesItemIdentifier:appId} completionBlock:nil];
+        
+		storeViewController.delegate = self;
+
+		[[iTellAFriend getRootViewController] presentViewController:storeViewController animated:YES completion:^{
+			
+		}];
+        
+        
+	} else {
+        // Use the standard openUrl method if StoreKit is unavailable.
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:iTellAFriendRateiOSAppStoreURLFormat, self.appStoreID]]];
+    }
 }
 
 - (void)rateThisAppWithAlertView:(BOOL)alertView
@@ -184,16 +214,16 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
         [alertView show];
         
     } else {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:iTellAFriendGiftiOSiTunesURLFormat, self.appStoreID]]];
+        [self rateThisApp];
     }
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (alertView.tag==1 && buttonIndex==1) {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:iTellAFriendGiftiOSiTunesURLFormat, self.appStoreID]]];
+        [self giftThisApp];
     } else if (alertView.tag==2 && buttonIndex==1) {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:iTellAFriendRateiOSAppStoreURLFormat, self.appStoreID]]];
+        [self rateThisApp];
     }
 }
 
@@ -401,6 +431,12 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
     [self performSelectorInBackground:@selector(checkForConnectivityInBackground) withObject:nil];
 }
 
+- (void)productViewControllerDidFinish:(SKStoreProductViewController *)viewController
+{
+    [viewController dismissViewControllerAnimated:YES completion:^{
+        
+    }];
+}
 
 
 @end

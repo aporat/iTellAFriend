@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		531D470416C5B307008DC7BF /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531D470316C5B307008DC7BF /* StoreKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		537C8C58168ABF6E008389CC /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 537C8C57168ABF6E008389CC /* Default-568h@2x.png */; };
 		6D2192F1152E13EC0088C540 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D2192EF152E13EC0088C540 /* SettingsViewController.m */; };
 		6D2192F2152E13EC0088C540 /* SettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6D2192F0152E13EC0088C540 /* SettingsViewController.xib */; };
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		531D470316C5B307008DC7BF /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		537C8C57168ABF6E008389CC /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		6D2192EE152E13EC0088C540 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SettingsViewController.h; path = iTellAFriendDemo/SettingsViewController.h; sourceTree = SOURCE_ROOT; };
 		6D2192EF152E13EC0088C540 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SettingsViewController.m; path = iTellAFriendDemo/SettingsViewController.m; sourceTree = SOURCE_ROOT; };
@@ -50,6 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				531D470416C5B307008DC7BF /* StoreKit.framework in Frameworks */,
 				6DC7B608152DFCA1004968F4 /* MessageUI.framework in Frameworks */,
 				6D3E345214C4F54E0003B72B /* UIKit.framework in Frameworks */,
 				6D3E345414C4F54E0003B72B /* Foundation.framework in Frameworks */,
@@ -105,6 +108,7 @@
 		6D3E345014C4F54E0003B72B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				531D470316C5B307008DC7BF /* StoreKit.framework */,
 				6DC7B607152DFCA1004968F4 /* MessageUI.framework */,
 				6D3E345114C4F54E0003B72B /* UIKit.framework */,
 				6D3E345314C4F54E0003B72B /* Foundation.framework */,

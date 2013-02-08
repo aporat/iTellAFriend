@@ -19,6 +19,7 @@
 
 #import <Foundation/Foundation.h>
 #import <MessageUI/MessageUI.h>
+#import <StoreKit/StoreKit.h>
 
 #ifdef DEBUG
 // First, check if we can use Cocoalumberjack for logging
@@ -32,7 +33,7 @@ extern int ddLogLevel;
 #define ITELLLog(...) ((void)0)
 #endif
 
-@interface iTellAFriend : NSObject <MFMailComposeViewControllerDelegate, UIAlertViewDelegate> {
+@interface iTellAFriend : NSObject <MFMailComposeViewControllerDelegate, SKStoreProductViewControllerDelegate, UIAlertViewDelegate> {
   NSString *appStoreCountry;
   NSString *applicationName;
   NSString *applicationVersion;

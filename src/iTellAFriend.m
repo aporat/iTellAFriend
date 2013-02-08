@@ -291,7 +291,7 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
                                   "<tbody> \n"
                                   "<tr> \n"
                                   "<td style=\"padding-right:10px;vertical-align:top\"> \n"
-                                  "<a target=\"_blank\" href=\"%@\"><img height=\"170\" border=\"0\" src=\"%@\" alt=\"Cover Art\"></a> \n"
+                                  "<a target=\"_blank\" href=\"%@\"><img style=\"height: 170px; border-radius: 30px; -moz-border-radius: 30px; -khtml-border-radius: 30px; -webkit-border-radius: 30px;\" src=\"%@\" alt=\"Cover Art\"></a> \n"
                                   "</td> \n"
                                   "<td style=\"vertical-align:top\"> \n"
                                   "<a target=\"_blank\" href=\"%@\" style=\"color: Black;text-decoration:none\"> \n"

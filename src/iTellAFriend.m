@@ -26,6 +26,7 @@
 
 static iTellAFriend *sharedInstance = nil;
 
+static NSString *const iTellAFriendAppIdKey = @"iTellAFriendAppIdKey";
 static NSString *const iTellAFriendAppKey = @"iTellAFriendAppKey";
 static NSString *const iTellAFriendAppNameKey = @"iTellAFriendAppNameKey";
 static NSString *const iTellAFriendAppGenreNameKey = @"iTellAFriendAppGenreNameKey";
@@ -133,12 +134,18 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
         self.applicationGenreName = [defaults objectForKey:iTellAFriendAppGenreNameKey];
         self.appStoreIconImage = [defaults objectForKey:iTellAFriendAppStoreIconImageKey];
         self.applicationSellerName = [defaults objectForKey:iTellAFriendAppSellerNameKey];
+        
+        if (!self.appStoreID) {
+            self.appStoreID = [[defaults objectForKey:iTellAFriendAppIdKey] integerValue];
+        }
     }
     
     // get the application name from the bundle
     if (self.applicationName==nil) {
         self.applicationName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"];
     }
+    
+
     
     // check if this is a new version
     if (![[defaults objectForKey:iTellAFriendAppKey] isEqualToString:applicationKey]) {
@@ -386,6 +393,14 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
                 }
                 
                 NSDictionary* result = [results objectAtIndex:0];
+                
+                // get app id
+                if (!self.appStoreID)
+                {
+                    NSString *trackId = [result valueForKey:@"trackId"];
+                    [self performSelectorOnMainThread:@selector(setAppStoreID:) withObject:trackId waitUntilDone:YES];
+                    [defaults setObject:trackId forKey:iTellAFriendAppIdKey];
+                }
                 
                 // get genre
                 if (!applicationGenreName)

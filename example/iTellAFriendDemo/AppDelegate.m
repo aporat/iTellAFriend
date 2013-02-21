@@ -30,7 +30,7 @@
     RootViewController* vc = [[RootViewController alloc] initWithNibName:@"RootViewController" bundle:nil];
     
     _navigationController = [[UINavigationController alloc] initWithRootViewController:vc];
-    [self.window addSubview:_navigationController.view];
+    [self.window setRootViewController:_navigationController];
     [self.window makeKeyAndVisible];
     
     

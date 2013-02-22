@@ -80,10 +80,10 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 {
     if ((self = [super init]))
     {
-
+        
         // get bundle id from plist
         self.applicationBundleID = [[NSBundle mainBundle] bundleIdentifier];
-
+        
         // get country
         self.appStoreCountry = [(NSLocale *)[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
         
@@ -96,7 +96,7 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
         
         
         [self performSelectorOnMainThread:@selector(applicationLaunched) withObject:nil waitUntilDone:NO];
-
+        
     }
     return self;
 }
@@ -145,7 +145,7 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
         self.applicationName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"];
     }
     
-
+    
     
     // check if this is a new version
     if (![[defaults objectForKey:iTellAFriendAppKey] isEqualToString:applicationKey]) {
@@ -194,6 +194,8 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 
 - (void)rateThisApp
 {
+    ITELLLog(@"Opening %@", [NSString stringWithFormat:iTellAFriendRateiOSAppStoreURLFormat, self.appStoreID]);
+    
 	if (NSStringFromClass([SKStoreProductViewController class]) != nil) {
         // Use the in-app StoreKit view if available (iOS 6)
 		SKStoreProductViewController *storeViewController = [[SKStoreProductViewController alloc] init];
@@ -201,7 +203,7 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 		[storeViewController loadProductWithParameters:@{SKStoreProductParameterITunesItemIdentifier:appId} completionBlock:nil];
         
 		storeViewController.delegate = self;
-
+        
 		[[iTellAFriend getRootViewController] presentViewController:storeViewController animated:YES completion:^{
 			
 		}];
@@ -288,7 +290,7 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
                                       ];
         
         return emailBody;
-
+        
     }
     
     // Fill out the email body text
@@ -388,52 +390,67 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
                 
                 if (results==nil || [results count]==0) {
                     ITELLLog(@"Unable to find apple id %@", self.applicationKey);
-
+                    
                     return;
                 }
                 
                 NSDictionary* result = [results objectAtIndex:0];
                 
-                // get app id
-                if (!self.appStoreID)
-                {
+                if (result!=nil) {
+                    
                     NSString *trackId = [result valueForKey:@"trackId"];
-                    [self performSelectorOnMainThread:@selector(setAppStoreID:) withObject:trackId waitUntilDone:YES];
-                    [defaults setObject:trackId forKey:iTellAFriendAppIdKey];
-                }
-                
-                // get genre
-                if (!applicationGenreName)
-                {
                     NSString *genreName = [result valueForKey:@"primaryGenreName"];
-                    [self performSelectorOnMainThread:@selector(setApplicationGenreName:) withObject:genreName waitUntilDone:YES];
-                    [defaults setObject:genreName forKey:iTellAFriendAppGenreNameKey];
-                }
-                
-                if (!appStoreIconImage)
-                {
                     NSString *iconImage = [result valueForKey:@"artworkUrl100"];
-                    [self performSelectorOnMainThread:@selector(setAppStoreIconImage:) withObject:iconImage waitUntilDone:YES];
-                    [defaults setObject:iconImage forKey:iTellAFriendAppStoreIconImageKey];
-                }
-                
-                if (!applicationName)
-                {
                     NSString *appName = [result valueForKey:@"trackName"];
-                    [self performSelectorOnMainThread:@selector(setApplicationName:) withObject:appName waitUntilDone:YES];
-                    [defaults setObject:appName forKey:iTellAFriendAppNameKey];
-                }
-                
-                if (!applicationSellerName)
-                {
                     NSString *sellerName = [result valueForKey:@"sellerName"];
-                    [self performSelectorOnMainThread:@selector(setApplicationSellerName:) withObject:sellerName waitUntilDone:YES];
-                    [defaults setObject:sellerName forKey:iTellAFriendAppSellerNameKey];
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        
+                        // get app id
+                        if (!self.appStoreID) {
+                            if (trackId!=nil) {
+                                NSUInteger appStoreId = [trackId integerValue];
+                                
+                                NSLog(@"%d", appStoreId);
+                                self.appStoreID = appStoreId;
+                                [defaults setObject:[NSNumber numberWithInteger:appStoreId] forKey:iTellAFriendAppIdKey];
+                            }
+                        }
+                        
+                        // get genre
+                        if (!applicationGenreName) {
+                            if (genreName!=nil) {
+                                self.applicationGenreName = genreName;
+                                [defaults setObject:genreName forKey:iTellAFriendAppGenreNameKey];
+                            }
+                        }
+                        
+                        if (!appStoreIconImage) {
+                            if (iconImage!=nil) {
+                                self.appStoreIconImage = iconImage;
+                                [defaults setObject:iconImage forKey:iTellAFriendAppStoreIconImageKey];
+                            }
+                        }
+                        
+                        if (!applicationName) {
+                            if (appName!=nil) {
+                                self.applicationName = appName;
+                                [defaults setObject:appName forKey:iTellAFriendAppNameKey];
+                            }
+                        }
+                        
+                        if (!applicationSellerName) {
+                            if (sellerName!=nil) {
+                                self.applicationSellerName = sellerName;
+                                [defaults setObject:sellerName forKey:iTellAFriendAppSellerNameKey];
+                            }
+                        }
+                    });
+                    
+                    [defaults setObject:applicationKey forKey:iTellAFriendAppKey];
+                    ITELLLog(@"Loaded apple id information %@", self.applicationKey);
                 }
                 
-                [defaults setObject:applicationKey forKey:iTellAFriendAppKey];
-                ITELLLog(@"Loaded apple id information %@", self.applicationKey);
-
             } else {
                 ITELLLog(@"Unable to find apple id %@", self.applicationKey);
             }

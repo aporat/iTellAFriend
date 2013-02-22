@@ -410,8 +410,6 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
                         if (!self.appStoreID) {
                             if (trackId!=nil) {
                                 NSUInteger appStoreId = [trackId integerValue];
-                                
-                                NSLog(@"%d", appStoreId);
                                 self.appStoreID = appStoreId;
                                 [defaults setObject:[NSNumber numberWithInteger:appStoreId] forKey:iTellAFriendAppIdKey];
                             }

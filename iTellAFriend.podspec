@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name     = 'iTellAFriend'
-  s.version  = '1.3.0'
+  s.version  = '1.4.1'
   s.license  = 'Apache License, Version 2.0'
   s.summary  = 'iTellAFriend is an iOS toolkit for displaying a preconfigued mail composer' \
                'with a "Tell a Friend" template in ios apps.'

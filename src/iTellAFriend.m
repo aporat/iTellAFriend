@@ -1,5 +1,5 @@
 //
-// Version 1.1.0
+// Version 1.5.0
 //
 // Copyright 2011-2012 Kosher Penguin LLC
 // Created by Adar Porat (https://github.com/aporat) on 1/16/2012.
@@ -19,10 +19,6 @@
 
 #import "iTellAFriend.h"
 
-#import <Availability.h>
-#if !__has_feature(objc_arc)
-#error This class requires automatic reference counting
-#endif
 
 #ifdef DEBUG
 // First, check if we can use Cocoalumberjack for logging
@@ -130,12 +126,9 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 - (void)applicationLaunched
 {
     // app key used to cache the app data
-    if (self.appStoreID)
-    {
+    if (self.appStoreID) {
         self.applicationKey = [NSString stringWithFormat:@"%d-%@", self.appStoreID, self.applicationVersion];
-    }
-    else
-    {
+    } else {
         self.applicationKey = [NSString stringWithFormat:@"%@-%@", self.applicationBundleID, self.applicationVersion];
     }
     
@@ -208,23 +201,16 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 {
     ITELLLog(@"Opening %@", [NSString stringWithFormat:iTellAFriendRateiOSAppStoreURLFormat, self.appStoreID]);
     
-	if (NSStringFromClass([SKStoreProductViewController class]) != nil) {
-        // Use the in-app StoreKit view if available (iOS 6)
-		SKStoreProductViewController *storeViewController = [[SKStoreProductViewController alloc] init];
-		NSNumber *appId = [NSNumber numberWithInteger:self.appStoreID];
-		[storeViewController loadProductWithParameters:@{SKStoreProductParameterITunesItemIdentifier:appId} completionBlock:nil];
+    SKStoreProductViewController *storeViewController = [[SKStoreProductViewController alloc] init];
+    NSNumber *appId = [NSNumber numberWithInteger:self.appStoreID];
+    [storeViewController loadProductWithParameters:@{SKStoreProductParameterITunesItemIdentifier:appId} completionBlock:nil];
+    
+    storeViewController.delegate = self;
+    
+    [[iTellAFriend getRootViewController] presentViewController:storeViewController animated:YES completion:^{
         
-		storeViewController.delegate = self;
-        
-		[[iTellAFriend getRootViewController] presentViewController:storeViewController animated:YES completion:^{
-			
-		}];
-        
-        
-	} else {
-        // Use the standard openUrl method if StoreKit is unavailable.
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:iTellAFriendRateiOSAppStoreURLFormat, self.appStoreID]]];
-    }
+    }];
+    
 }
 
 - (void)rateThisAppWithAlertView:(BOOL)alertView
@@ -250,7 +236,7 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 
 - (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error
 {
-    [controller dismissModalViewControllerAnimated:YES];
+    [controller dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (NSString *)messageTitle
@@ -360,8 +346,7 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 
 - (NSURL *)appStoreURL
 {
-    if (appStoreURL)
-    {
+    if (appStoreURL) {
         return appStoreURL;
     }
     

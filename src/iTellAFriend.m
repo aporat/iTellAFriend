@@ -43,7 +43,10 @@ static NSString *const iTellAFriendAppStoreIconImageKey = @"iTellAFriendAppStore
 
 static NSString *const iTellAFriendAppLookupURLFormat = @"http://itunes.apple.com/%@/lookup";
 static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.com/us/app/%@/id%d?mt=8&ls=1";
-static NSString *const iTellAFriendRateiOSAppStoreURLFormat = @"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%d";
+static NSString *const iTellAFriendRateiOSAppStoreURLFormat = @"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@";
+static NSString *const iTellAFriendRateiOS7AppStoreURLFormat = @"itms-apps://itunes.apple.com/app/id%@";
+
+
 static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/giftSongsWizard?gift=1&salableAdamId=%d&productType=C&pricingParameter=STDQ";
 
 #define REQUEST_TIMEOUT 60.0
@@ -199,18 +202,12 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 
 - (void)rateThisApp
 {
-    ITELLLog(@"Opening %@", [NSString stringWithFormat:iTellAFriendRateiOSAppStoreURLFormat, self.appStoreID]);
     
-    SKStoreProductViewController *storeViewController = [[SKStoreProductViewController alloc] init];
-    NSNumber *appId = [NSNumber numberWithInteger:self.appStoreID];
-    [storeViewController loadProductWithParameters:@{SKStoreProductParameterITunesItemIdentifier:appId} completionBlock:nil];
+    NSURL *rateURL = [NSURL URLWithString:[NSString stringWithFormat:([[UIDevice currentDevice].systemVersion floatValue] >= 7.0f)? iTellAFriendRateiOS7AppStoreURLFormat: iTellAFriendRateiOSAppStoreURLFormat, @(self.appStoreID)]];
     
-    storeViewController.delegate = self;
-    
-    [[iTellAFriend getRootViewController] presentViewController:storeViewController animated:YES completion:^{
-        
-    }];
-    
+    if ([[UIApplication sharedApplication] canOpenURL:rateURL]) {
+        [[UIApplication sharedApplication] openURL:rateURL];
+    }
 }
 
 - (void)rateThisAppWithAlertView:(BOOL)alertView
@@ -457,13 +454,5 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 {
     [self performSelectorInBackground:@selector(checkForConnectivityInBackground) withObject:nil];
 }
-
-- (void)productViewControllerDidFinish:(SKStoreProductViewController *)viewController
-{
-    [viewController dismissViewControllerAnimated:YES completion:^{
-        
-    }];
-}
-
 
 @end

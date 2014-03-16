@@ -1,7 +1,7 @@
 //
 // Version 1.5.0
 //
-// Copyright 2011-2012 Kosher Penguin LLC 
+// Copyright 2011-2012 Kosher Penguin LLC
 // Created by Adar Porat (https://github.com/aporat) on 1/16/2012.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,21 +19,20 @@
 
 #import <Foundation/Foundation.h>
 #import <MessageUI/MessageUI.h>
-#import <StoreKit/StoreKit.h>
 
-@interface iTellAFriend : NSObject <MFMailComposeViewControllerDelegate, SKStoreProductViewControllerDelegate, UIAlertViewDelegate> {
-  NSString *appStoreCountry;
-  NSString *applicationName;
-  NSString *applicationVersion;
-  NSString *applicationGenreName;
-  NSString *applicationSellerName;
-  NSString *appStoreIconImage;
-
-  NSString *applicationKey;
-  NSString *messageTitle;
-  NSString *message;
-  NSUInteger appStoreID;
-  NSURL *appStoreURL;
+@interface iTellAFriend : NSObject <MFMailComposeViewControllerDelegate, UIAlertViewDelegate> {
+    NSString *appStoreCountry;
+    NSString *applicationName;
+    NSString *applicationVersion;
+    NSString *applicationGenreName;
+    NSString *applicationSellerName;
+    NSString *appStoreIconImage;
+    
+    NSString *applicationKey;
+    NSString *messageTitle;
+    NSString *message;
+    NSUInteger appStoreID;
+    NSURL *appStoreURL;
 }
 
 //application details - these are set automatically

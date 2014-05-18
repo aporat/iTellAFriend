@@ -188,9 +188,9 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:iTellAFriendGiftiOSiTunesURLFormat, self.appStoreID]]];
 }
 
-- (void)giftThisAppWithAlertView:(BOOL)alertView
+- (void)giftThisAppWithAlertView:(BOOL)showAlertView
 {
-    if (alertView==YES) {
+    if (showAlertView) {
         UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Gift This App", @"") message:[NSString stringWithFormat:NSLocalizedString(@"You really enjoy using %@. Your family and friends will love you for giving them this app.", @""), self.applicationName] delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", @"") otherButtonTitles:NSLocalizedString(@"Gift", @""), nil];
         alertView.tag = 1;
         [alertView show];
@@ -210,9 +210,9 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
     }
 }
 
-- (void)rateThisAppWithAlertView:(BOOL)alertView
+- (void)rateThisAppWithAlertView:(BOOL)showAlertView
 {
-    if (alertView==YES) {
+    if (showAlertView) {
         UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Rate This App", @"") message:[NSString stringWithFormat:NSLocalizedString(@"If you enjoy using %@, would you mind taking a moment to rate it? It won't take more than a minute. Thanks for your support!", @""), self.applicationName] delegate:self cancelButtonTitle:NSLocalizedString(@"No, Thanks", @"") otherButtonTitles:NSLocalizedString(@"Rate", @""), nil];
         alertView.tag = 2;
         [alertView show];

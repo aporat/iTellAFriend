@@ -392,7 +392,7 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
                 
                 if (result!=nil) {
                     
-                    NSString *trackId = [result valueForKey:@"trackId"];
+                    id        trackId = [result valueForKey:@"trackId"];
                     NSString *genreName = [result valueForKey:@"primaryGenreName"];
                     NSString *iconImage = [result valueForKey:@"artworkUrl100"];
                     NSString *appName = [result valueForKey:@"trackName"];
@@ -403,9 +403,15 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
                         // get app id
                         if (!self.appStoreID) {
                             if (trackId!=nil) {
-                                NSNumberFormatter*  numberFormatter = [[NSNumberFormatter alloc] init];
-                                numberFormatter.numberStyle = NSNumberFormatterDecimalStyle;
-                                NSUInteger appStoreId = [[numberFormatter numberFromString:trackId] unsignedIntegerValue];
+                                NSUInteger appStoreId = 0;
+                                if ([trackId isKindOfClass:[NSNumber class]]) {
+                                    appStoreId = [trackId unsignedIntegerValue];
+                                }
+                                else if ([trackId isKindOfClass:[NSString class]]) {
+                                    NSNumberFormatter*  numberFormatter = [[NSNumberFormatter alloc] init];
+                                    numberFormatter.numberStyle = NSNumberFormatterDecimalStyle;
+                                    appStoreId = [[numberFormatter numberFromString:trackId] unsignedIntegerValue];
+                                }
                                 self.appStoreID = appStoreId;
                                 [defaults setObject:[NSNumber numberWithUnsignedInteger:appStoreId] forKey:iTellAFriendAppIdKey];
                             }

@@ -55,7 +55,7 @@
  * Returns the shared iTellAFriend singleton
  * @return The shared iTellAFriend singleton
  */
-+ (iTellAFriend *)sharedInstance;
++ (instancetype)sharedInstance;
 
 /**
  * Returns if the app can display the tell a friend email composer
@@ -76,9 +76,9 @@
 
 /**
  * Lanuches the gift app itunes screen, with optional informational alert view
- * @param alertView optional informational alert view
+ * @param showAlertView optional informational alert view
  */
-- (void)giftThisAppWithAlertView:(BOOL)alertView;
+- (void)giftThisAppWithAlertView:(BOOL)showAlertView;
 
 /**
  * Lanuches the app store rate this app screen
@@ -87,8 +87,8 @@
 
 /**
  * Lanuches the app store rate this app screen, with optional informational alert view
- * @param alertView optional informational alert view
+ * @param showAlertView optional informational alert view
  */
-- (void)rateThisAppWithAlertView:(BOOL)alertView;
+- (void)rateThisAppWithAlertView:(BOOL)showAlertView;
 
 @end

@@ -42,12 +42,12 @@ static NSString *const iTellAFriendAppSellerNameKey = @"iTellAFriendAppSellerNam
 static NSString *const iTellAFriendAppStoreIconImageKey = @"iTellAFriendAppStoreIconImageKey";
 
 static NSString *const iTellAFriendAppLookupURLFormat = @"http://itunes.apple.com/%@/lookup";
-static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.com/us/app/%@/id%d?mt=8&ls=1";
+static NSString *const iTellAFriendiOSAppStoreURLFormat = @"http://itunes.apple.com/us/app/%@/id%lu?mt=8&ls=1";
 static NSString *const iTellAFriendRateiOSAppStoreURLFormat = @"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@";
 static NSString *const iTellAFriendRateiOS7AppStoreURLFormat = @"itms-apps://itunes.apple.com/app/id%@";
 
 
-static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/giftSongsWizard?gift=1&salableAdamId=%d&productType=C&pricingParameter=STDQ";
+static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes.apple.com/WebObjects/MZFinance.woa/wa/giftSongsWizard?gift=1&salableAdamId=%lu&productType=C&pricingParameter=STDQ";
 
 #define REQUEST_TIMEOUT 60.0
 
@@ -77,21 +77,21 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
     [self performSelectorOnMainThread:@selector(sharedInstance) withObject:nil waitUntilDone:NO];
 }
 
-+ (iTellAFriend *)sharedInstance
-{
-	@synchronized(self) {
-		if (sharedInstance == nil) {
-			sharedInstance = [[self alloc] init];
-		}
-	}
-	return sharedInstance;
++ (instancetype)sharedInstance {
+    static iTellAFriend*    _sharedInstance = nil;
+    static dispatch_once_t  onceToken;
+    dispatch_once(&onceToken, ^{
+        _sharedInstance = [[[self class] alloc] init];
+    });
+    
+    return _sharedInstance;
 }
 
-- (iTellAFriend *)init
+
+- (id)init
 {
     if ((self = [super init]))
     {
-        
         // get bundle id from plist
         self.applicationBundleID = [[NSBundle mainBundle] bundleIdentifier];
         
@@ -130,7 +130,7 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 {
     // app key used to cache the app data
     if (self.appStoreID) {
-        self.applicationKey = [NSString stringWithFormat:@"%d-%@", self.appStoreID, self.applicationVersion];
+        self.applicationKey = [NSString stringWithFormat:@"%lu-%@", (unsigned long)self.appStoreID, self.applicationVersion];
     } else {
         self.applicationKey = [NSString stringWithFormat:@"%@-%@", self.applicationBundleID, self.applicationVersion];
     }
@@ -144,7 +144,7 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
         self.applicationSellerName = [defaults objectForKey:iTellAFriendAppSellerNameKey];
         
         if (!self.appStoreID) {
-            self.appStoreID = [[defaults objectForKey:iTellAFriendAppIdKey] integerValue];
+            self.appStoreID = [[defaults objectForKey:iTellAFriendAppIdKey] unsignedIntegerValue];
         }
     }
     
@@ -185,12 +185,12 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 
 - (void)giftThisApp
 {
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:iTellAFriendGiftiOSiTunesURLFormat, self.appStoreID]]];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:iTellAFriendGiftiOSiTunesURLFormat, (unsigned long)self.appStoreID]]];
 }
 
-- (void)giftThisAppWithAlertView:(BOOL)alertView
+- (void)giftThisAppWithAlertView:(BOOL)showAlertView
 {
-    if (alertView==YES) {
+    if (showAlertView) {
         UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Gift This App", @"") message:[NSString stringWithFormat:NSLocalizedString(@"You really enjoy using %@. Your family and friends will love you for giving them this app.", @""), self.applicationName] delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", @"") otherButtonTitles:NSLocalizedString(@"Gift", @""), nil];
         alertView.tag = 1;
         [alertView show];
@@ -210,9 +210,9 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
     }
 }
 
-- (void)rateThisAppWithAlertView:(BOOL)alertView
+- (void)rateThisAppWithAlertView:(BOOL)showAlertView
 {
-    if (alertView==YES) {
+    if (showAlertView) {
         UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Rate This App", @"") message:[NSString stringWithFormat:NSLocalizedString(@"If you enjoy using %@, would you mind taking a moment to rate it? It won't take more than a minute. Thanks for your support!", @""), self.applicationName] delegate:self cancelButtonTitle:NSLocalizedString(@"No, Thanks", @"") otherButtonTitles:NSLocalizedString(@"Rate", @""), nil];
         alertView.tag = 2;
         [alertView show];
@@ -347,7 +347,7 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
         return appStoreURL;
     }
     
-    return [NSURL URLWithString:[NSString stringWithFormat:iTellAFriendiOSAppStoreURLFormat, @"app", appStoreID]];
+    return [NSURL URLWithString:[NSString stringWithFormat:iTellAFriendiOSAppStoreURLFormat, @"app", (unsigned long)appStoreID]];
 }
 
 - (void)checkForConnectivityInBackground
@@ -358,7 +358,7 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
         
         if (self.appStoreID)
         {
-            iTunesServiceURL = [iTunesServiceURL stringByAppendingFormat:@"?id=%u", (unsigned int)self.appStoreID];
+            iTunesServiceURL = [iTunesServiceURL stringByAppendingFormat:@"?id=%lu", (unsigned long)self.appStoreID];
         }
         else
         {
@@ -392,7 +392,7 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
                 
                 if (result!=nil) {
                     
-                    NSString *trackId = [result valueForKey:@"trackId"];
+                    id        trackId = [result valueForKey:@"trackId"];
                     NSString *genreName = [result valueForKey:@"primaryGenreName"];
                     NSString *iconImage = [result valueForKey:@"artworkUrl100"];
                     NSString *appName = [result valueForKey:@"trackName"];
@@ -403,35 +403,43 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
                         // get app id
                         if (!self.appStoreID) {
                             if (trackId!=nil) {
-                                NSUInteger appStoreId = [trackId integerValue];
+                                NSUInteger appStoreId = 0;
+                                if ([trackId isKindOfClass:[NSNumber class]]) {
+                                    appStoreId = [trackId unsignedIntegerValue];
+                                }
+                                else if ([trackId isKindOfClass:[NSString class]]) {
+                                    NSNumberFormatter*  numberFormatter = [[NSNumberFormatter alloc] init];
+                                    numberFormatter.numberStyle = NSNumberFormatterDecimalStyle;
+                                    appStoreId = [[numberFormatter numberFromString:trackId] unsignedIntegerValue];
+                                }
                                 self.appStoreID = appStoreId;
-                                [defaults setObject:[NSNumber numberWithInteger:appStoreId] forKey:iTellAFriendAppIdKey];
+                                [defaults setObject:[NSNumber numberWithUnsignedInteger:appStoreId] forKey:iTellAFriendAppIdKey];
                             }
                         }
                         
                         // get genre
-                        if (!applicationGenreName) {
+                        if (!self.applicationGenreName) {
                             if (genreName!=nil) {
                                 self.applicationGenreName = genreName;
                                 [defaults setObject:genreName forKey:iTellAFriendAppGenreNameKey];
                             }
                         }
                         
-                        if (!appStoreIconImage) {
+                        if (!self.appStoreIconImage) {
                             if (iconImage!=nil) {
                                 self.appStoreIconImage = iconImage;
                                 [defaults setObject:iconImage forKey:iTellAFriendAppStoreIconImageKey];
                             }
                         }
                         
-                        if (!applicationName) {
+                        if (!self.applicationName) {
                             if (appName!=nil) {
                                 self.applicationName = appName;
                                 [defaults setObject:appName forKey:iTellAFriendAppNameKey];
                             }
                         }
                         
-                        if (!applicationSellerName) {
+                        if (!self.applicationSellerName) {
                             if (sellerName!=nil) {
                                 self.applicationSellerName = sellerName;
                                 [defaults setObject:sellerName forKey:iTellAFriendAppSellerNameKey];

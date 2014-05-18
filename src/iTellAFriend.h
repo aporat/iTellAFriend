@@ -55,7 +55,7 @@
  * Returns the shared iTellAFriend singleton
  * @return The shared iTellAFriend singleton
  */
-+ (iTellAFriend *)sharedInstance;
++ (instancetype)sharedInstance;
 
 /**
  * Returns if the app can display the tell a friend email composer

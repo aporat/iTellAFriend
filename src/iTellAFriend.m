@@ -77,21 +77,21 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
     [self performSelectorOnMainThread:@selector(sharedInstance) withObject:nil waitUntilDone:NO];
 }
 
-+ (iTellAFriend *)sharedInstance
-{
-	@synchronized(self) {
-		if (sharedInstance == nil) {
-			sharedInstance = [[self alloc] init];
-		}
-	}
-	return sharedInstance;
++ (instancetype)sharedInstance {
+    static iTellAFriend*    _sharedInstance = nil;
+    static dispatch_once_t  onceToken;
+    dispatch_once(&onceToken, ^{
+        _sharedInstance = [[[self class] alloc] init];
+    });
+    
+    return _sharedInstance;
 }
 
-- (iTellAFriend *)init
+
+- (id)init
 {
     if ((self = [super init]))
     {
-        
         // get bundle id from plist
         self.applicationBundleID = [[NSBundle mainBundle] bundleIdentifier];
         

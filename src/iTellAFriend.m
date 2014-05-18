@@ -410,28 +410,28 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
                         }
                         
                         // get genre
-                        if (!applicationGenreName) {
+                        if (!self.applicationGenreName) {
                             if (genreName!=nil) {
                                 self.applicationGenreName = genreName;
                                 [defaults setObject:genreName forKey:iTellAFriendAppGenreNameKey];
                             }
                         }
                         
-                        if (!appStoreIconImage) {
+                        if (!self.appStoreIconImage) {
                             if (iconImage!=nil) {
                                 self.appStoreIconImage = iconImage;
                                 [defaults setObject:iconImage forKey:iTellAFriendAppStoreIconImageKey];
                             }
                         }
                         
-                        if (!applicationName) {
+                        if (!self.applicationName) {
                             if (appName!=nil) {
                                 self.applicationName = appName;
                                 [defaults setObject:appName forKey:iTellAFriendAppNameKey];
                             }
                         }
                         
-                        if (!applicationSellerName) {
+                        if (!self.applicationSellerName) {
                             if (sellerName!=nil) {
                                 self.applicationSellerName = sellerName;
                                 [defaults setObject:sellerName forKey:iTellAFriendAppSellerNameKey];

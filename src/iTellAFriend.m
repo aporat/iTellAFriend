@@ -183,23 +183,6 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
     return picker;
 }
 
-- (void)giftThisApp
-{
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:iTellAFriendGiftiOSiTunesURLFormat, (unsigned long)self.appStoreID]]];
-}
-
-- (void)giftThisAppWithAlertView:(BOOL)showAlertView
-{
-    if (showAlertView) {
-        UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Gift This App", @"") message:[NSString stringWithFormat:NSLocalizedString(@"You really enjoy using %@. Your family and friends will love you for giving them this app.", @""), self.applicationName] delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", @"") otherButtonTitles:NSLocalizedString(@"Gift", @""), nil];
-        alertView.tag = 1;
-        [alertView show];
-        
-    } else {
-        [self giftThisApp];
-    }
-}
-
 - (void)rateThisApp
 {
     
@@ -224,9 +207,7 @@ static NSString *const iTellAFriendGiftiOSiTunesURLFormat = @"https://buy.itunes
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (alertView.tag==1 && buttonIndex==1) {
-        [self giftThisApp];
-    } else if (alertView.tag==2 && buttonIndex==1) {
+    if (alertView.tag==2 && buttonIndex==1) {
         [self rateThisApp];
     }
 }

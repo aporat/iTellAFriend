@@ -70,17 +70,6 @@
 - (UINavigationController *)tellAFriendController;
 
 /**
- * Lanuches the gift app itunes screen
- */
-- (void)giftThisApp;
-
-/**
- * Lanuches the gift app itunes screen, with optional informational alert view
- * @param showAlertView optional informational alert view
- */
-- (void)giftThisAppWithAlertView:(BOOL)showAlertView;
-
-/**
  * Lanuches the app store rate this app screen
  */
 - (void)rateThisApp;

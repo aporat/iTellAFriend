@@ -51,7 +51,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 3;
+    return 2;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -67,9 +67,6 @@
         cell.textLabel.text = NSLocalizedString(@"Tell a Friend", "");
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     } else if (indexPath.row == 1) {
-        cell.textLabel.text = NSLocalizedString(@"Gift This App", "");
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    } else if (indexPath.row == 2) {
         cell.textLabel.text = NSLocalizedString(@"Rate in App Store", "");
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
@@ -86,8 +83,6 @@
             [self presentViewController:tellAFriendController animated:YES completion:nil];
         }
     } else if (indexPath.row == 1) {
-        [[iTellAFriend sharedInstance] giftThisAppWithAlertView:YES];
-    } else if (indexPath.row == 2) {
         [[iTellAFriend sharedInstance] rateThisAppWithAlertView:YES];
     }
     
